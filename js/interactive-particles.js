@@ -1,0 +1,1 @@
+document.addEventListener('mousemove',e=>{const c=document.getElementById('particle-canvas'); if(c){c.style.filter=`drop-shadow(${(e.clientX%20)-10}px ${(e.clientY%20)-10}px 8px rgba(0,212,255,.4))`;}});

@@ -1,0 +1,5 @@
+
+.project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.project-card{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:25px;border-radius:20px;color:white;transition:.4s}
+.project-card:hover{transform:translateY(-10px)}
+.tag{color:#00d4ff}

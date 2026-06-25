@@ -1,0 +1,1 @@
+Copy skills.css and skills.js. Paste certifications.html before Contact section. Add <link rel='stylesheet' href='css/skills.css'> and <script src='js/skills.js'></script>.

@@ -1,0 +1,1 @@
+Add CSS in head, insert interactive-particles.html near particle canvas, add JS before </body>.

@@ -1,0 +1,18 @@
+
+#earth-scene{
+height:500px;
+border-radius:25px;
+background:radial-gradient(circle,#0b1f3a,#020617);
+overflow:hidden;
+position:relative;
+}
+.earth-placeholder{
+width:220px;height:220px;border-radius:50%;
+background:radial-gradient(circle,#1e90ff,#0a4d8f);
+margin:120px auto;
+box-shadow:0 0 60px rgba(0,212,255,.5);
+animation:spin 20s linear infinite;
+}
+@keyframes spin{
+from{transform:rotate(0deg)}to{transform:rotate(360deg)}
+}

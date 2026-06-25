@@ -1,0 +1,7 @@
+
+#earth3d-container{
+position:fixed;
+inset:0;
+z-index:-1;
+background:radial-gradient(circle,#08111f,#020617);
+}

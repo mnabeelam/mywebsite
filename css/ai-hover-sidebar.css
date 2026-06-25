@@ -1,0 +1,41 @@
+
+/* AI Hover Sidebar Patch */
+
+/* Desktop */
+#ai-widget{
+    position:fixed !important;
+    right:-260px !important;
+    top:150px !important;
+    width:300px !important;
+    transition:right .35s ease !important;
+    z-index:9999 !important;
+    display:block !important;
+}
+
+#ai-widget:hover{
+    right:0 !important;
+}
+
+#ai-widget::before{
+    content:"🤖 AI";
+    position:absolute;
+    left:-60px;
+    top:20px;
+    width:60px;
+    height:50px;
+    background:#06b6d4;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px 0 0 10px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* Mobile */
+@media (max-width:992px){
+    #ai-widget{
+        display:none !important;
+    }
+}

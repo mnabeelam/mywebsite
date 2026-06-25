@@ -1,0 +1,14 @@
+
+.hero-v2{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+color:white;
+padding:40px;
+}
+.hero-v2 h1{font-size:4rem;margin-bottom:20px}
+.hero-v2 p{font-size:1.3rem;max-width:800px;margin:auto}
+.hero-btn{display:inline-block;margin-top:20px;padding:14px 30px;border-radius:10px;background:#06b6d4;color:white;text-decoration:none}

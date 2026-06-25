@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{console.log('GPU Optimized Universe Loaded');const c=document.getElementById('particle-canvas');if(c){c.classList.add('gpu-universe');}});

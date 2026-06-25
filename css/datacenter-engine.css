@@ -1,0 +1,1 @@
+.datacenter-framework{padding:100px 0}.rack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px}.rack-card{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:25px;padding:30px;color:white;box-shadow:0 0 30px rgba(0,212,255,.15);transition:.4s}.rack-card:hover{transform:translateY(-10px)}

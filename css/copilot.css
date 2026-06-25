@@ -1,0 +1,20 @@
+
+.copilot-panel{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:25px;
+color:white;
+box-shadow:0 0 30px rgba(0,212,255,.2);
+}
+.copilot-output{
+margin-top:15px;
+color:#00d4ff;
+min-height:80px;
+}
+.copilot-input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+}

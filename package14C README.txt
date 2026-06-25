@@ -1,0 +1,1 @@
+Add <link rel='manifest' href='pwa/manifest.json'> before </head> and <script src='js/pwa-engine.js'></script> before </body>.

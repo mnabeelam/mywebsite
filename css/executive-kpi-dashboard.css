@@ -1,0 +1,5 @@
+
+.kpi-dashboard{padding:40px;background:#0f172a;color:#fff}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}
+.kpi-card{background:rgba(255,255,255,.08);padding:20px;border-radius:16px;text-align:center}
+.kpi-number{font-size:2rem;font-weight:bold}

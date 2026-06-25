@@ -1,0 +1,10 @@
+
+:root{--accent:#00d4ff}
+.ultimate-panel{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(25px);
+border-radius:30px;
+padding:40px;
+color:white;
+box-shadow:0 0 40px rgba(0,212,255,.25);
+}

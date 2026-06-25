@@ -1,0 +1,1 @@
+Add css/visitor-stats.css in head, paste section before Contact, add js/visitor-stats.js before </body>.

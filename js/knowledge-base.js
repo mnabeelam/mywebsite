@@ -1,0 +1,1 @@
+function searchKnowledge(){const q=document.getElementById('kbSearch').value.toLowerCase();console.log('Search:',q);}

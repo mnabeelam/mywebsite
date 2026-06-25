@@ -1,0 +1,4 @@
+
+.chat-panel{max-width:800px;margin:auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:20px;border-radius:20px;color:white}
+.chat-box{height:300px;overflow:auto;border:1px solid rgba(255,255,255,.1);padding:15px}
+.chat-input{width:100%;padding:12px;margin-top:10px}

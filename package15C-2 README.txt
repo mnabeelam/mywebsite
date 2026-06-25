@@ -1,0 +1,1 @@
+Add galaxy-layer.css in head, insert galaxy-layer.html inside hero/earth section, add galaxy-layer.js before </body>.

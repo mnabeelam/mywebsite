@@ -1,0 +1,19 @@
+
+.real-earth{
+padding:80px 20px;
+background:linear-gradient(180deg,#020617,#0f172a);
+color:white;
+text-align:center;
+}
+.earth-showcase{
+width:320px;height:320px;
+margin:30px auto;
+border-radius:50%;
+background:radial-gradient(circle at 30% 30%,#4ade80,#1e40af,#020617);
+box-shadow:0 0 60px rgba(59,130,246,.6);
+animation:earthspin 20s linear infinite;
+}
+@keyframes earthspin{
+from{transform:rotate(0deg)}
+to{transform:rotate(360deg)}
+}

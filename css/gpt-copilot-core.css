@@ -1,0 +1,16 @@
+
+.ai-copilot-panel{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(25px);
+border-radius:25px;
+padding:30px;
+color:white;
+box-shadow:0 0 30px rgba(0,212,255,.2);
+}
+.ai-input{
+width:100%;
+padding:15px;
+border-radius:15px;
+border:none;
+margin-top:15px;
+}

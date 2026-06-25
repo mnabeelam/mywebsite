@@ -1,0 +1,6 @@
+
+.ai-chat-window{height:350px;overflow:auto;padding:10px;background:#fff;border:1px solid #ddd}
+.ai-message{margin:8px 0;padding:8px;border-radius:8px}
+.ai-user{background:#e0f2fe}
+.ai-bot{background:#f3f4f6}
+.ai-typing{display:none;font-style:italic}

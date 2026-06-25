@@ -1,0 +1,1 @@
+console.log('Search module ready');

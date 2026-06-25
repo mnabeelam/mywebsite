@@ -1,0 +1,13 @@
+
+CV Upload
+ -> OpenAI Extraction
+ -> Knowledge JSON Generation
+ -> AI Context Builder
+ -> Website Assistant
+
+Knowledge Files:
+profile.json
+skills.json
+projects.json
+certifications.json
+experience.json

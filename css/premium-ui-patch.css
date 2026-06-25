@@ -1,0 +1,80 @@
+
+/* Phase 16A-R2 Premium UI Patch */
+
+/* Hero Improvements */
+.hero-v2{
+    min-height:75vh !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    padding:80px 20px !important;
+}
+
+.hero-v2 > div{
+    max-width:1000px !important;
+    width:100% !important;
+}
+
+.hero-v2 h1{
+    font-size:clamp(2.5rem,5vw,4.5rem) !important;
+    line-height:1.1 !important;
+    margin-bottom:20px !important;
+}
+
+/* KPI Cards */
+.kpi-card,.metric-card{
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.3s;
+}
+
+.kpi-card:hover,.metric-card:hover{
+    transform:translateY(-6px);
+}
+
+/* Earth Section */
+.earth-showcase{
+    width:420px !important;
+    height:420px !important;
+    max-width:90vw !important;
+    max-height:90vw !important;
+}
+
+/* Profile Card */
+.profile-card,
+.card{
+    border-radius:24px !important;
+    overflow:hidden;
+}
+
+/* AI Widget Desktop */
+#ai-widget{
+    position:fixed !important;
+    right:20px !important;
+    bottom:20px !important;
+    top:auto !important;
+    z-index:9999 !important;
+}
+
+/* Mobile */
+@media (max-width:992px){
+
+    #ai-widget{
+        display:none !important;
+    }
+
+    .hero-v2{
+        min-height:60vh !important;
+    }
+
+    .kpi-grid,
+    .metrics-grid{
+        grid-template-columns:1fr !important;
+    }
+
+    .earth-showcase{
+        width:280px !important;
+        height:280px !important;
+    }
+}

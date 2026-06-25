@@ -1,0 +1,13 @@
+
+.profile-card,.social-card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+padding:25px;
+border-radius:20px;
+color:white;
+margin:20px 0;
+}
+.profile-card img{
+width:180px;border-radius:50%;
+}
+a{color:#00d4ff;text-decoration:none}

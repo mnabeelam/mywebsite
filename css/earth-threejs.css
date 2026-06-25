@@ -1,0 +1,9 @@
+
+#earth-threejs-container{
+height:600px;
+background:#020617;
+border-radius:20px;
+overflow:hidden;
+position:relative;
+}
+canvas{display:block}

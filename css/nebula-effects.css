@@ -1,0 +1,1 @@
+.nebula-layer{position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(128,0,255,.15),transparent 40%),radial-gradient(circle at 70% 60%,rgba(0,212,255,.12),transparent 45%);filter:blur(25px);pointer-events:none;}

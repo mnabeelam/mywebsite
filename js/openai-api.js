@@ -1,0 +1,1 @@
+async function callOpenAI(message){console.log('OpenAI Connector Ready:',message);return 'API connector configured. Add backend endpoint and API key.';}

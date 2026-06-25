@@ -1,0 +1,10 @@
+
+#loader{
+position:fixed;inset:0;background:#050816;
+display:flex;align-items:center;justify-content:center;
+color:#00d4ff;font-size:2rem;z-index:999999;
+animation:fadeOut 1s ease 2s forwards;
+}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
+.page-transition{animation:fadeIn 1.2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}

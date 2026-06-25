@@ -1,0 +1,45 @@
+
+/* Phase 16A-R3 Executive Cleanup */
+
+/* Hide AI Widget completely */
+/*#ai-widget{
+    display:none !important;
+}*/
+
+/* Hide Live Metrics section */
+.live-metrics{
+    display:none !important;
+}
+
+/* Smaller Earth */
+.earth-showcase{
+    width:220px !important;
+    height:220px !important;
+    box-shadow:0 0 30px rgba(59,130,246,.35) !important;
+}
+
+/* Better Hero */
+.hero-v2{
+    min-height:55vh !important;
+}
+
+.hero-v2 h1{
+    font-size:clamp(2rem,4vw,3.5rem) !important;
+}
+
+/* Executive spacing */
+section{
+    margin-bottom:25px !important;
+}
+
+/* Better KPI Cards */
+.kpi-card{
+    min-height:110px !important;
+}
+
+/* Profile Card */
+.profile-card,
+.card{
+    max-width:900px;
+    margin:auto;
+}

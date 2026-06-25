@@ -1,0 +1,28 @@
+
+#ai-widget{
+position:fixed;
+bottom:20px;
+right:20px;
+width:320px;
+background:rgba(20,20,40,.85);
+backdrop-filter:blur(15px);
+border:1px solid rgba(0,212,255,.3);
+border-radius:20px;
+padding:15px;
+color:white;
+box-shadow:0 0 25px rgba(0,212,255,.2);
+z-index:9999;
+}
+#ai-answer{
+min-height:60px;
+margin:10px 0;
+color:#00d4ff;
+}
+#ai-input{
+width:100%;
+padding:10px;
+background:#111;
+color:white;
+border:none;
+border-radius:10px;
+}

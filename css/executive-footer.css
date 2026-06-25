@@ -1,0 +1,18 @@
+
+.executive-footer{
+background:#020617;
+color:#fff;
+padding:50px 20px;
+text-align:center;
+border-top:1px solid rgba(255,255,255,.1);
+}
+.footer-links a{
+color:#38bdf8;
+margin:0 12px;
+text-decoration:none;
+}
+.footer-brand{
+font-size:1.3rem;
+font-weight:bold;
+margin-bottom:10px;
+}

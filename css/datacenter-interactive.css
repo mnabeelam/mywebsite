@@ -1,0 +1,5 @@
+
+.rack-clickable,.node-clickable{cursor:pointer;transition:.3s}
+.rack-clickable:hover,.node-clickable:hover{transform:scale(1.05)}
+#dc-popup{display:none;position:fixed;top:20%;left:50%;transform:translateX(-50%);
+background:#111827;color:#fff;padding:20px;border-radius:12px;z-index:9999}

@@ -1,0 +1,1 @@
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}.skill-card,.cert-card{background:rgba(255,255,255,.08);padding:25px;border-radius:20px;color:white}.bar{height:10px;background:#222}.fill{height:10px;background:linear-gradient(90deg,#00d4ff,#8b5cf6)}

@@ -1,0 +1,1 @@
+Add gpu-universe.css in head and gpu-universe.js before </body>. Requires Particle Core.

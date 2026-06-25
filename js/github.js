@@ -1,0 +1,1 @@
+console.log('Github stats module loaded');

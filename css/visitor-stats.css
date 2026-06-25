@@ -1,0 +1,1 @@
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}.stats-card{background:rgba(255,255,255,.08);padding:25px;border-radius:20px;color:white;text-align:center}

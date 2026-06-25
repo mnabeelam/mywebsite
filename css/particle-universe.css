@@ -1,0 +1,15 @@
+
+#particle-universe{
+position:relative;
+overflow:hidden;
+padding:80px 20px;
+}
+.particle-star{
+display:inline-block;
+color:#00d4ff;
+animation:twinkle 2s infinite alternate;
+}
+@keyframes twinkle{
+from{opacity:.3}
+to{opacity:1}
+}

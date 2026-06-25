@@ -1,0 +1,16 @@
+
+.starfield-layer{
+position:absolute;
+inset:0;
+pointer-events:none;
+background-image:
+radial-gradient(2px 2px at 20% 30%,#fff,transparent),
+radial-gradient(2px 2px at 70% 60%,#00d4ff,transparent),
+radial-gradient(1px 1px at 40% 80%,#fff,transparent);
+opacity:.7;
+animation:twinkle 4s infinite alternate;
+}
+@keyframes twinkle{
+from{opacity:.4}
+to{opacity:.9}
+}

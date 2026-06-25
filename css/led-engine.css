@@ -1,0 +1,12 @@
+
+.led{
+width:12px;height:12px;border-radius:50%;
+display:inline-block;margin-right:10px;
+background:#00ff88;
+box-shadow:0 0 15px #00ff88;
+animation:blink 1s infinite alternate;
+}
+@keyframes blink{
+from{opacity:.3}
+to{opacity:1}
+}

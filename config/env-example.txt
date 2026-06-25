@@ -1,0 +1,3 @@
+
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+MODEL=gpt-5.5

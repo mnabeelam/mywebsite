@@ -1,0 +1,4 @@
+
+#progressBar{position:fixed;top:0;left:0;width:0;height:4px;background:linear-gradient(90deg,#00d4ff,#8b5cf6);z-index:9999}
+#backTop{position:fixed;bottom:30px;right:30px;padding:15px;border-radius:50%;display:none}
+.counter{font-size:2rem;color:#00d4ff}

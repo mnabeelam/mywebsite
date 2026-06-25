@@ -1,0 +1,50 @@
+
+/* Phase 16A Homepage Polish Patch */
+
+/* Fix Hero */
+.hero-v2{
+    min-height:60vh !important;
+    padding:60px 20px !important;
+}
+
+.hero-v2 h1{
+    font-size:2.8rem !important;
+    line-height:1.2 !important;
+    word-break:normal !important;
+}
+
+.hero-v2 p{
+    font-size:1.1rem !important;
+}
+
+/* Fix AI Widget */
+#ai-widget{
+    position:fixed !important;
+    right:15px !important;
+    bottom:15px !important;
+    top:auto !important;
+    width:280px !important;
+    z-index:9999 !important;
+}
+
+/* KPI Mobile Fix */
+.kpi-grid{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) !important;
+    gap:20px !important;
+}
+
+.kpi-card{
+    min-height:120px;
+}
+
+/* Earth Section */
+.earth-showcase{
+    width:260px !important;
+    height:260px !important;
+}
+
+/* General spacing */
+section{
+    margin-bottom:30px;
+}

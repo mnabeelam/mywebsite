@@ -1,0 +1,14 @@
+
+.floating-label{
+display:inline-block;
+padding:8px 15px;
+margin:8px;
+border-radius:20px;
+background:rgba(0,212,255,.12);
+color:#00d4ff;
+box-shadow:0 0 15px rgba(0,212,255,.3);
+animation:floatLabel 3s ease-in-out infinite;
+}
+@keyframes floatLabel{
+50%{transform:translateY(-8px)}
+}

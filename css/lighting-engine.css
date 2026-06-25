@@ -1,0 +1,11 @@
+
+.glow-zone{
+background:radial-gradient(circle,rgba(0,212,255,.15),transparent);
+padding:40px;border-radius:30px;
+box-shadow:0 0 40px rgba(0,212,255,.3);
+animation:pulse 3s infinite alternate;
+}
+@keyframes pulse{
+from{box-shadow:0 0 20px rgba(0,212,255,.2)}
+to{box-shadow:0 0 60px rgba(0,212,255,.5)}
+}

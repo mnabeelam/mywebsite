@@ -1,0 +1,9 @@
+
+Extract:
+- Profile
+- Skills
+- Projects
+- Certifications
+- Experience
+
+Return valid JSON.

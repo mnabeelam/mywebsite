@@ -1,0 +1,16 @@
+
+.spacex-lighting{
+position:absolute;
+inset:0;
+pointer-events:none;
+background:
+radial-gradient(circle at center,
+rgba(0,212,255,.15),
+transparent 65%);
+filter:blur(100px);
+animation:spaceGlow 4s infinite alternate;
+}
+@keyframes spaceGlow{
+from{opacity:.5}
+to{opacity:1}
+}

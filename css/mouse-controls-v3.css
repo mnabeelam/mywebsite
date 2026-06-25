@@ -1,0 +1,5 @@
+
+.parallax-layer{
+transition:transform .15s linear;
+will-change:transform;
+}

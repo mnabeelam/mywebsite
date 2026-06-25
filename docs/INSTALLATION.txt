@@ -1,0 +1,1 @@
+Add project-showcase.css in <head>, insert project-showcase.html after KPI or instead of Earth section, add project-showcase.js before </body>.

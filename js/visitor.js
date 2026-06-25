@@ -1,0 +1,1 @@
+localStorage.visits=(+localStorage.visits||0)+1;

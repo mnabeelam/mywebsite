@@ -1,0 +1,14 @@
+
+.cursor-dot{
+position:fixed;width:15px;height:15px;border-radius:50%;
+background:#00d4ff;pointer-events:none;z-index:99999;
+box-shadow:0 0 20px #00d4ff;
+}
+.holo-panel{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+border:1px solid rgba(0,212,255,.3);
+border-radius:25px;
+padding:30px;color:white;
+box-shadow:0 0 30px rgba(0,212,255,.2);
+}

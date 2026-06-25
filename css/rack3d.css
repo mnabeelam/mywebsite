@@ -1,0 +1,15 @@
+
+.rack3d-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+.rack3d{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+padding:30px;
+border-radius:20px;
+color:white;
+transition:.4s;
+}
+.rack3d:hover{transform:rotateY(8deg) translateY(-8px);}

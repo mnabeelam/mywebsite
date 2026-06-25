@@ -1,0 +1,1 @@
+Add nebula-effects.css in head, insert nebula-effects.html inside particle/earth section, add nebula-effects.js before </body>.

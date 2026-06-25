@@ -1,0 +1,6 @@
+{
+"oracle":"Oracle 19c, Data Guard, HA",
+"vmware":"ESXi, Hyper-V, Proxmox",
+"linux":"Apache, Squid, Monitoring",
+"ai":"Face Recognition, Smart Campus"
+}

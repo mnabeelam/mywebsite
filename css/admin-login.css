@@ -1,0 +1,5 @@
+
+.admin-login{max-width:420px;margin:auto;padding:25px;background:rgba(255,255,255,.08);
+border-radius:20px}
+.admin-login input{width:100%;padding:12px;margin:10px 0}
+.admin-login button{padding:12px 20px}

@@ -1,0 +1,1 @@
+Add CSS in head, insert particle-core.html in hero/background section, add JS before </body>.

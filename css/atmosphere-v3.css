@@ -1,0 +1,8 @@
+
+.earth-atmosphere{
+position:absolute;
+inset:0;
+pointer-events:none;
+background:radial-gradient(circle,rgba(0,212,255,.15),transparent 70%);
+filter:blur(80px);
+}
