@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard | Portfolio</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<main class="admin-shell">
+  <section class="admin-card">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <button id="logoutBtn" type="button" class="secondary">Logout</button>
+    </div>
+
+    <p id="welcomeText" class="admin-note">Checking session...</p>
+    <p id="knowledgeStatus" class="admin-note">Knowledge status loading...</p>
+
+    <form id="uploadForm">
+      <h2>CV Knowledge Upload</h2>
+      <p class="admin-note">Upload your CV (PDF or DOCX). The site builds a searchable knowledge base for the Quick Assistant.</p>
+      <input id="cvFile" name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+      <button type="submit">Upload and Build Knowledge</button>
+    </form>
+
+    <button id="rebuildBtn" type="button" class="secondary">Rebuild Knowledge Index</button>
+
+    <p id="dashboardMessage" class="message" hidden></p>
+    <p class="admin-note"><a href="index.php">Back to login</a> · <a href="../index.php">Homepage</a></p>
+  </section>
+</main>
+<script src="admin.js"></script>
+</body>
+</html>

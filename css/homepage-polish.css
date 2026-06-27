@@ -24,6 +24,8 @@
     bottom:15px !important;
     top:auto !important;
     width:280px !important;
+    max-height:320px !important;
+    overflow:hidden !important;
     z-index:9999 !important;
 }
 

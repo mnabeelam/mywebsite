@@ -1,0 +1,19 @@
+DirectoryIndex index.php index.html
+
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always set Cache-Control "no-store, no-cache, must-revalidate"
+</IfModule>
+
+# Block static admin pages that bypass PHP auth
+<FilesMatch "^(dashboard\.html|index\.html|cv-upload\.html)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Optional on LIVE server: allow admin only from your office/home IP
+# <RequireAll>
+#   Require all denied
+#   Require ip 203.0.113.10
+# </RequireAll>

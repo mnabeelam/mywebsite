@@ -8,6 +8,11 @@ color:white;
 margin:20px 0;
 }
 .profile-card img{
-width:180px;border-radius:50%;
+width:180px;
+height:180px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+background:#1e293b;
 }
 a{color:#00d4ff;text-decoration:none}

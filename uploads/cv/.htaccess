@@ -1,0 +1,13 @@
+Options -Indexes
+
+# Never execute scripts from upload folders
+<FilesMatch "\.(?i:php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Block direct web download of uploaded CV files
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>

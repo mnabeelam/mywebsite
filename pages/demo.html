@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Immersive 3D demo — datacenter, particle universe, and Earth visualizations.">
+<meta name="robots" content="noindex, nofollow">
+<title>3D Demo Experience | Mirza Nabeel Ahmed</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/demo-page.css">
+</head>
+<body class="demo-page">
+
+<div id="loader">Initializing 3D experience…</div>
+
+<div id="three-container" aria-hidden="true"></div>
+<div class="demo-overlay" aria-hidden="true"></div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<nav class="demo-nav">
+  <a class="back-link" href="../index.php">← Back to Portfolio</a>
+  <span>3D Demo Experience</span>
+</nav>
+
+<main class="demo-content">
+  <section class="demo-hero">
+    <div class="demo-hero-panel">
+      <h1>Immersive Technology Demo</h1>
+      <p>Heavy visual effects live here so the main homepage stays fast. Explore the 3D universe background, animated particle field, and datacenter showcase.</p>
+      <div class="demo-tags">
+        <span class="demo-tag">Three.js</span>
+        <span class="demo-tag">Particles</span>
+        <span class="demo-tag">Datacenter</span>
+        <span class="demo-tag">Earth Engine</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-section" id="datacenter">
+    <h2>3D Datacenter Experience</h2>
+    <p class="section-lead">Enterprise infrastructure clusters — Oracle, VMware, Linux, and AI systems.</p>
+    <div class="rack-grid">
+      <article class="server-rack">
+        <h3><span class="led"></span>Oracle Cluster</h3>
+        <p>Oracle 19c • Data Guard • High Availability</p>
+      </article>
+      <article class="server-rack">
+        <h3><span class="led"></span>VMware Cluster</h3>
+        <p>ESXi • Hyper-V • Proxmox virtualization</p>
+      </article>
+      <article class="server-rack">
+        <h3><span class="led"></span>Linux Infrastructure</h3>
+        <p>Apache • Squid • Nagios monitoring</p>
+      </article>
+      <article class="server-rack">
+        <h3><span class="led"></span>AI Projects</h3>
+        <p>Face Recognition • Smart Campus automation</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="demo-section" id="particles">
+    <h2>Particle Universe</h2>
+    <p class="section-lead">Move your mouse — the starfield responds while Three.js renders the wireframe Earth behind the content.</p>
+    <div class="particle-note">
+      <span class="particle-star">✦</span>
+      This page loads WebGL and canvas effects on demand. Your main portfolio homepage does not load these scripts, keeping first visit fast on mobile and slow connections.
+    </div>
+  </section>
+
+  <section class="demo-section" id="earth">
+    <h2>Global Technology Leadership</h2>
+    <p class="section-lead">CSS-powered Earth showcase — lightweight alternative to full texture mapping.</p>
+    <div class="earth-showcase-wrap">
+      <div class="earth-showcase" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <footer class="demo-footer">
+    <p><a href="../index.php">Return to main portfolio</a></p>
+    <p>© 2026 Mirza Nabeel Ahmed</p>
+  </footer>
+</main>
+
+<button id="backTop" type="button" aria-label="Back to top">↑</button>
+
+<script src="../js/three.min.js"></script>
+<script src="../js/demo-page.js"></script>
+</body>
+</html>

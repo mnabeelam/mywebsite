@@ -1,0 +1,89 @@
+{
+    "certifications": [
+        {
+            "id": "cert_default_oracle",
+            "title": "Oracle Database 19c Administration",
+            "issuer": "Oracle",
+            "year": "2023",
+            "description": "Enterprise database administration — installation, backup, recovery, performance tuning, and high availability for Oracle 19c environments.",
+            "filename": "",
+            "file_type": "",
+            "original_name": "",
+            "active": true,
+            "sort_order": 1,
+            "created": "2026-06-26T12:17:05+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "cert_default_aws_arch",
+            "title": "AWS Cloud Architecture",
+            "issuer": "Amazon Web Services",
+            "year": "2024",
+            "description": "Cloud architecture design — VPC, EC2, S3, IAM, and scalable deployment patterns for hybrid and cloud-native workloads.",
+            "filename": "",
+            "file_type": "",
+            "original_name": "",
+            "active": true,
+            "sort_order": 2,
+            "created": "2026-06-26T12:17:05+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "cert_default_aws_found",
+            "title": "AWS Cloud Foundations",
+            "issuer": "Amazon Web Services",
+            "year": "2023",
+            "description": "Core AWS services, billing, security, and cloud fundamentals for infrastructure and application hosting.",
+            "filename": "",
+            "file_type": "",
+            "original_name": "",
+            "active": true,
+            "sort_order": 3,
+            "created": "2026-06-26T12:17:05+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "cert_default_ccna",
+            "title": "CCNA Training",
+            "issuer": "Cisco",
+            "year": "2015",
+            "description": "Routing, switching, VLANs, and network troubleshooting for campus and enterprise LAN/WAN infrastructure.",
+            "filename": "",
+            "file_type": "",
+            "original_name": "",
+            "active": true,
+            "sort_order": 4,
+            "created": "2026-06-26T12:17:05+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "cert_2c6d62d8a2ba",
+            "title": "Wireshark Advanced Tools and Techniques",
+            "issuer": "LinkedIn Learning",
+            "year": "2025",
+            "description": "Advanced packet analysis, filtering, and troubleshooting techniques for network diagnostics and security investigations.",
+            "filename": "cert_20260626_123549_f0d903fdf756d223.pdf",
+            "file_type": "pdf",
+            "original_name": "CertificateOfCompletion_Wireshark Advanced Tools and Techniques.pdf",
+            "active": true,
+            "sort_order": 0,
+            "created": "2026-06-26T12:35:49+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "cert_7c087488e0ca",
+            "title": "Wireshark VoIP",
+            "issuer": "LinkedIn Learning",
+            "year": "2025",
+            "description": "VoIP protocol analysis and troubleshooting using Wireshark for voice quality and SIP/RTP diagnostics.",
+            "filename": "cert_20260626_124552_8c98bf072f8399e1.pdf",
+            "file_type": "pdf",
+            "original_name": "CertificateOfCompletion_Wireshark VoIP.pdf",
+            "active": true,
+            "sort_order": 0,
+            "created": "2026-06-26T12:45:52+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        }
+    ],
+    "updated": "2026-06-27T00:00:00+00:00"
+}

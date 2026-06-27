@@ -1,9 +1,27 @@
 <?php
-$targetDir = __DIR__ . '/../uploads/cv/';
-if(!is_dir($targetDir)) mkdir($targetDir,0775,true);
+declare(strict_types=1);
 
-$file = basename($_FILES['cv']['name']);
-move_uploaded_file($_FILES['cv']['tmp_name'],$targetDir.$file);
+require_once __DIR__ . '/lib/bootstrap.php';
+require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/lib/upload.php';
 
-echo json_encode(['status'=>'uploaded','file'=>$file]);
-?>
+requirePost();
+requireAdminAuth();
+requireCsrfFromRequest();
+
+if (empty($_FILES['cv'])) {
+    jsonResponse(['error' => 'No file uploaded.'], 400);
+}
+
+try {
+    $saved = saveUploadedCv($_FILES['cv']);
+    jsonResponse([
+        'status' => 'uploaded',
+        'file' => $saved['filename'],
+        'size' => $saved['size'],
+    ]);
+} catch (InvalidArgumentException $e) {
+    jsonResponse(['error' => $e->getMessage()], 400);
+} catch (Throwable $e) {
+    jsonResponse(['error' => 'Upload failed.'], 500);
+}

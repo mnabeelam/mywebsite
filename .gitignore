@@ -1,0 +1,16 @@
+config/local.php
+uploads/cv/*
+!uploads/cv/.htaccess
+!uploads/cv/.gitkeep
+uploads/certifications/*
+!uploads/certifications/.gitkeep
+!uploads/certifications/.htaccess
+php/storage/rate-limits/
+php/storage/logs/
+php/storage/knowledge-backups/
+php/storage/visitors/
+php/storage/contact-messages/
+php/storage/backups/
+php/storage/shop/orders/
+php/storage/database/
+*.sqlite

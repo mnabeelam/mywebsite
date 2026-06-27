@@ -1,0 +1,12 @@
+Options -Indexes
+
+# Deny all PHP endpoints by default; allow only the active API surface.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+
+<FilesMatch "^(admin-access|admin-login|admin-logout|admin-session|admin-settings|admin-stats|backup-admin|build-knowledge|cert-admin|cert-extract|cert-file|certifications|chat-api|contact|health|knowledge-api|knowledge-search|knowledge-status|process-cv|shop-admin|shop-order|shop-products|site-config|upload-and-process|upload-cv|users-admin|visitor-count|visitor-track)\.php$">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+</FilesMatch>

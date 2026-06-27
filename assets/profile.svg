@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title">
+  <title id="title">Mirza Nabeel Ahmed</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <circle cx="120" cy="120" r="118" fill="url(#bg)" stroke="url(#ring)" stroke-width="4"/>
+  <circle cx="120" cy="92" r="34" fill="#334155"/>
+  <path d="M52 196c12-36 36-54 68-54s56 18 68 54" fill="#334155"/>
+  <text x="120" y="210" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#94a3b8">MNA</text>
+</svg>

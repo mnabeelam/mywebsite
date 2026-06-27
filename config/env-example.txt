@@ -1,3 +1,11 @@
 
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
-MODEL=gpt-5.5
+OPENAI_MODEL=gpt-4o-mini
+
+# Admin login (required for CV upload and knowledge rebuild)
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_strong_password_here
+
+# Optional: use a password hash instead of plain ADMIN_PASSWORD
+# Generate with: php -r "echo password_hash('your_password', PASSWORD_DEFAULT);"
+# ADMIN_PASSWORD_HASH=$2y$10$examplehashvalue

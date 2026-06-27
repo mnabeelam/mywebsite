@@ -15,14 +15,28 @@ z-index:9999;
 }
 #ai-answer{
 min-height:60px;
+max-height:160px;
+overflow-y:auto;
+overflow-x:hidden;
 margin:10px 0;
 color:#00d4ff;
+line-height:1.5;
+word-wrap:break-word;
+white-space:pre-line;
 }
 #ai-input{
 width:100%;
 padding:10px;
 background:#111;
 color:white;
-border:none;
+border:1px solid rgba(0,212,255,.2);
 border-radius:10px;
+box-sizing:border-box;
+}
+#ai-input:-webkit-autofill,
+#ai-input:-webkit-autofill:hover,
+#ai-input:-webkit-autofill:focus{
+-webkit-box-shadow:0 0 0 1000px #111 inset;
+-webkit-text-fill-color:#fff;
+transition:background-color 9999s ease-out 0s;
 }

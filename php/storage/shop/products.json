@@ -1,0 +1,64 @@
+{
+    "products": [
+        {
+            "id": "prod_36a769d05fb1",
+            "brand": "HP",
+            "name": "HP ProLiant DL360 Gen9 Server",
+            "description": "Refurbished HP DL360 Gen9 rack server \u2014 dual Xeon, enterprise RAID, ideal for virtualization lab or small business workloads. Price negotiable for bulk orders.",
+            "price": 250000,
+            "cost_price": 0,
+            "currency": "PKR",
+            "category": "Servers",
+            "images": [
+                "assets\/shop\/placeholder.svg"
+            ],
+            "image": "assets\/shop\/placeholder.svg",
+            "track_stock": true,
+            "stock": 5,
+            "active": true,
+            "created": "2026-06-25T18:59:26+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "prod_5d89cfa5d6e7",
+            "brand": "Dell",
+            "name": "Dell 22\" LCD Monitor",
+            "description": "Dell 22-inch LCD display \u2014 VGA\/HDMI, suitable for office desks, labs, and reception counters. Includes power cable.",
+            "price": 15000,
+            "cost_price": 0,
+            "currency": "PKR",
+            "category": "Monitors",
+            "images": [
+                "assets\/shop\/products\/product_20260626_173950_8256d57cdbe5.jpg",
+                "assets\/shop\/products\/product_20260626_173950_01646fecf48a.jpg",
+                "assets\/shop\/products\/product_20260626_173950_cfb8c0f38a80.jpg"
+            ],
+            "image": "assets\/shop\/products\/product_20260626_173950_8256d57cdbe5.jpg",
+            "track_stock": true,
+            "stock": 10,
+            "active": true,
+            "created": "2026-06-25T18:59:50+00:00",
+            "updated": "2026-06-27T00:00:00+00:00"
+        },
+        {
+            "id": "prod_2423ab9cfede",
+            "brand": "HP",
+            "name": "Wireless Mouse",
+            "description": "HP wireless optical mouse \u2014 USB receiver included, suitable for office and lab workstations.",
+            "price": 1200,
+            "cost_price": 0,
+            "currency": "PKR",
+            "category": "Accessories",
+            "images": [
+                "assets\/shop\/products\/product_20260626_133321_51ab1735c1e8.jpg"
+            ],
+            "image": "assets\/shop\/products\/product_20260626_133321_51ab1735c1e8.jpg",
+            "track_stock": true,
+            "stock": 49,
+            "active": true,
+            "created": "2026-06-26T13:36:21+00:00",
+            "updated": "2026-06-27T08:34:16+00:00"
+        }
+    ],
+    "updated": "2026-06-27T08:34:16+00:00"
+}

@@ -1,19 +1,78 @@
 <?php
-header('Content-Type: application/json');
+declare(strict_types=1);
 
-$apiKey = getenv('OPENAI_API_KEY');
-$question = $_POST['question'] ?? '';
+require_once __DIR__ . '/lib/bootstrap.php';
+require_once __DIR__ . '/lib/rate-limit.php';
+require_once __DIR__ . '/lib/openai.php';
+require_once __DIR__ . '/lib/assistant-search.php';
 
-if(!$apiKey){
-    http_response_code(500);
-    echo json_encode(['error'=>'OPENAI_API_KEY not configured']);
-    exit;
+requirePost();
+requireSameOrigin();
+rateLimit('chat_api', 30, 3600);
+
+$question = sanitizeText($_POST['question'] ?? '', 1000);
+if ($question === '') {
+    jsonResponse(['error' => 'Question is required.'], 400);
 }
 
-/* Implement OpenAI API call here */
-echo json_encode([
-  'status'=>'ready',
-  'question'=>$question,
-  'answer'=>'OpenAI integration point ready.'
-]);
-?>
+$combined = searchCombinedAssistantAnswer($question);
+
+if (!filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN)) {
+    if ($combined['answer'] !== null) {
+        jsonResponse([
+            'status' => 'ok',
+            'question' => $question,
+            'answer' => $combined['answer'],
+            'source' => $combined['source'],
+        ]);
+    }
+
+    jsonResponse([
+        'error' => 'AI assistant is not enabled on this site.',
+        'fallback' => true,
+    ], 503);
+}
+
+if (openaiApiKey() === '') {
+    if ($combined['answer'] !== null) {
+        jsonResponse([
+            'status' => 'ok',
+            'question' => $question,
+            'answer' => $combined['answer'],
+            'source' => $combined['source'],
+        ]);
+    }
+
+    jsonResponse([
+        'error' => 'Assistant is temporarily unavailable.',
+        'fallback' => true,
+    ], 503);
+}
+
+try {
+    require_once __DIR__ . '/lib/knowledge.php';
+    $answer = openaiChat(assistantSystemPrompt(), $question);
+    jsonResponse([
+        'status' => 'ok',
+        'question' => $question,
+        'answer' => $answer,
+        'source' => 'openai',
+    ]);
+} catch (Throwable $e) {
+    appLog('chat-api: ' . $e->getMessage());
+
+    if ($combined['answer'] !== null) {
+        jsonResponse([
+            'status' => 'ok',
+            'question' => $question,
+            'answer' => $combined['answer'],
+            'source' => $combined['source'],
+            'fallback' => true,
+        ]);
+    }
+
+    jsonResponse([
+        'error' => 'Assistant is temporarily unavailable. Please try again later.',
+        'fallback' => true,
+    ], 502);
+}

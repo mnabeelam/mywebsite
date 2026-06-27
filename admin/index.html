@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0; url=index.php">
+<title>Redirecting to Admin Login</title>
+<script>
+if (window.location.search && (window.location.search.indexOf('password=') !== -1 || window.location.search.indexOf('username=') !== -1)) {
+  window.location.replace('index.php?error=' + encodeURIComponent('Do not put username or password in the URL. Use the login form on index.php.'));
+} else {
+  window.location.replace('index.php');
+}
+</script>
+</head>
+<body>
+<p>Redirecting to secure admin login... <a href="index.php">Click here</a>.</p>
+</body>
+</html>

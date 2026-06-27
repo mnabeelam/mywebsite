@@ -1,0 +1,63 @@
+DirectoryIndex index.php index.html
+
+# Prevent directory listing and risky options
+Options -Indexes -MultiViews
+ServerSignature Off
+
+# Security headers (requires mod_headers on Apache)
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+  Header always unset X-Powered-By
+  Header always unset Server
+</IfModule>
+
+# Block direct access to backup, secrets, logs, and dev files
+<FilesMatch "(^\.|\.env$|\.ini$|\.log$|\.sql$|\.bak$|\.backup$|\.old$|\.swp$|\.gitignore$|\.gitattributes$|config\.sample\.json$|env-example\.txt$|local\.example\.php$|index\.full-backup\.html$|index\.html\.bk$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Block local credentials anywhere in the tree (Apache Files applies per-directory)
+<Files "local.php">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</Files>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Uncomment on LIVE HTTPS server to force encrypted connections:
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Block hidden paths (.git, .env, .cursor, etc.)
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+  # Block sensitive folders even if a misconfiguration removes child .htaccess
+  RewriteRule ^(?:config|knowledge|uploads|data|sections|scripts|docs|php/lib|php/storage)(?:/|$) - [F,L,NC]
+
+  # Block sensitive file extensions site-wide
+  RewriteRule \.(?:env|ini|log|sql|bak|backup|old|swp|git|dist|map)$ - [F,L,NC]
+
+  # Block common exploit probes in query strings (SQLi, XSS, PHP wrappers)
+  RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+  RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [NC,OR]
+  RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [NC,OR]
+  RewriteCond %{QUERY_STRING} (?:union.*select|insert.*into|drop.*table|update.*set|delete.*from) [NC,OR]
+  RewriteCond %{QUERY_STRING} (?:base64_encode|eval\(|php://|file://|expect://|data:text/html) [NC,OR]
+  RewriteCond %{QUERY_STRING} (?:\.\./|\.\.\\|%2e%2e) [NC]
+  RewriteRule ^ - [F,L]
+
+  # Block suspicious request methods on public site
+  RewriteCond %{REQUEST_METHOD} !^(GET|HEAD|POST)$ [NC]
+  RewriteRule ^ - [F,L]
+</IfModule>
+
+ErrorDocument 404 /404.html

@@ -1,5 +1,4 @@
 <?php
-function extractPdfText($file){
-   return file_exists($file) ? file_get_contents($file) : '';
-}
-?>
+declare(strict_types=1);
+
+require_once __DIR__ . '/lib/pdf-text.php';

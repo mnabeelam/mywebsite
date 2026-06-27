@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Oracle 19c Migration + Data Guard",
+        "tag": "Oracle",
+        "details": "High-availability database migration with disaster recovery for university ERP systems. Migrated production workloads to Oracle 19c with Data Guard standby for zero-data-loss failover across campus ERP and student information platforms."
+    },
+    {
+        "name": "Face Recognition System",
+        "tag": "AI",
+        "details": "Smart campus security and attendance automation using AI vision technology. Integrated camera feeds with recognition pipelines for controlled access and automated attendance logging across academic facilities."
+    },
+    {
+        "name": "Moodle CBT Deployment",
+        "tag": "Education",
+        "details": "Computer-based testing platform for large-scale academic assessments. Deployed Moodle CBT infrastructure supporting concurrent exam sessions, secure browser delivery, and centralized result management."
+    },
+    {
+        "name": "DSpace Repository",
+        "tag": "Research",
+        "details": "Digital research repository for academic publications and institutional knowledge. Built DSpace for faculty research output, thesis archiving, and open-access discovery across departments."
+    },
+    {
+        "name": "Smart Classroom",
+        "tag": "Smart Campus",
+        "details": "Interactive classroom technology rollout with AV integration, network connectivity, and centralized monitoring for lecture halls and labs across campus."
+    },
+    {
+        "name": "VMware Virtualization",
+        "tag": "VMware",
+        "details": "Enterprise VMware ESXi cluster design and operations — consolidated physical servers into virtualized workloads with HA, resource pools, and backup integration for 120+ server environments."
+    },
+    {
+        "name": "AI Assistant Platform",
+        "tag": "AI",
+        "details": "Portfolio AI assistant powered by structured knowledge base and OpenAI — answers career, certification, and shop questions using indexed CV and project data."
+    }
+]

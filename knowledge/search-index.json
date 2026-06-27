@@ -1,0 +1,274 @@
+{
+    "updated": "2026-06-27T08:31:06+00:00",
+    "entry_count": 28,
+    "entries": [
+        {
+            "topic": "profile",
+            "keywords": [
+                "profile",
+                "about",
+                "who",
+                "name",
+                "role",
+                "gift",
+                "university",
+                "director"
+            ],
+            "answer": "Mirza Nabeel Ahmed \u2014 Deputy Director IT at GIFT University. 18+ years in IT infrastructure, cyber security, virtualization, and digital transformation at GIFT University. Leads 120+ servers, 10,000+ users, and enterprise Oracle, VMware, AI, and smart campus initiatives with a 99% uptime focus."
+        },
+        {
+            "topic": "skills",
+            "keywords": [
+                "skills",
+                "expertise",
+                "technology",
+                "technical",
+                "stack"
+            ],
+            "answer": "Core skills: Oracle Database 19c, Oracle Data Guard, VMware ESXi, Linux Administration, Windows Server, Cyber Security, Network Administration, AWS Cloud, AI & Machine Learning, Smart Campus, Moodle CBT, DSpace, Nagios Monitoring, Digital Transformation, IT Service Management."
+        },
+        {
+            "topic": "oracle-database-19c",
+            "keywords": [
+                "oracle database 19c",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Oracle Database 19c."
+        },
+        {
+            "topic": "oracle-data-guard",
+            "keywords": [
+                "oracle data guard",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Oracle Data Guard."
+        },
+        {
+            "topic": "vmware-esxi",
+            "keywords": [
+                "vmware esxi",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in VMware ESXi."
+        },
+        {
+            "topic": "linux-administration",
+            "keywords": [
+                "linux administration",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Linux Administration."
+        },
+        {
+            "topic": "windows-server",
+            "keywords": [
+                "windows server",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Windows Server."
+        },
+        {
+            "topic": "cyber-security",
+            "keywords": [
+                "cyber security",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Cyber Security."
+        },
+        {
+            "topic": "network-administration",
+            "keywords": [
+                "network administration",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Network Administration."
+        },
+        {
+            "topic": "aws-cloud",
+            "keywords": [
+                "aws cloud",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in AWS Cloud."
+        },
+        {
+            "topic": "ai-machine-learning",
+            "keywords": [
+                "ai & machine learning",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in AI & Machine Learning."
+        },
+        {
+            "topic": "smart-campus",
+            "keywords": [
+                "smart campus",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Smart Campus."
+        },
+        {
+            "topic": "moodle-cbt",
+            "keywords": [
+                "moodle cbt",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Moodle CBT."
+        },
+        {
+            "topic": "dspace",
+            "keywords": [
+                "dspace",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in DSpace."
+        },
+        {
+            "topic": "nagios-monitoring",
+            "keywords": [
+                "nagios monitoring",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Nagios Monitoring."
+        },
+        {
+            "topic": "digital-transformation",
+            "keywords": [
+                "digital transformation",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in Digital Transformation."
+        },
+        {
+            "topic": "it-service-management",
+            "keywords": [
+                "it service management",
+                "skill",
+                "experience"
+            ],
+            "answer": "Experience and expertise in IT Service Management."
+        },
+        {
+            "topic": "oracle-19c-migration-data-guard",
+            "keywords": [
+                "oracle 19c migration + data guard",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: Oracle 19c Migration + Data Guard. High-availability database migration with disaster recovery for university ERP systems. Migrated production workloads to Oracle 19c with Data Guard standby for zero-data-loss failover across campus ERP and student information platforms."
+        },
+        {
+            "topic": "face-recognition-system",
+            "keywords": [
+                "face recognition system",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: Face Recognition System. Smart campus security and attendance automation using AI vision technology. Integrated camera feeds with recognition pipelines for controlled access and automated attendance logging across academic facilities."
+        },
+        {
+            "topic": "moodle-cbt-deployment",
+            "keywords": [
+                "moodle cbt deployment",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: Moodle CBT Deployment. Computer-based testing platform for large-scale academic assessments. Deployed Moodle CBT infrastructure supporting concurrent exam sessions, secure browser delivery, and centralized result management."
+        },
+        {
+            "topic": "dspace-repository",
+            "keywords": [
+                "dspace repository",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: DSpace Repository. Digital research repository for academic publications and institutional knowledge. Built DSpace for faculty research output, thesis archiving, and open-access discovery across departments."
+        },
+        {
+            "topic": "smart-classroom",
+            "keywords": [
+                "smart classroom",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: Smart Classroom. Interactive classroom technology rollout with AV integration, network connectivity, and centralized monitoring for lecture halls and labs across campus."
+        },
+        {
+            "topic": "vmware-virtualization",
+            "keywords": [
+                "vmware virtualization",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: VMware Virtualization. Enterprise VMware ESXi cluster design and operations \u2014 consolidated physical servers into virtualized workloads with HA, resource pools, and backup integration for 120+ server environments."
+        },
+        {
+            "topic": "ai-assistant-platform",
+            "keywords": [
+                "ai assistant platform",
+                "project",
+                "projects"
+            ],
+            "answer": "Project: AI Assistant Platform. Portfolio AI assistant powered by structured knowledge base and OpenAI \u2014 answers career, certification, and shop questions using indexed CV and project data."
+        },
+        {
+            "topic": "projects",
+            "keywords": [
+                "projects",
+                "project",
+                "work",
+                "portfolio"
+            ],
+            "answer": "Featured projects include Oracle 19c Migration + Data Guard, Face Recognition System, Moodle CBT Deployment, DSpace Repository, Smart Classroom, VMware Virtualization, AI Assistant Platform."
+        },
+        {
+            "topic": "certifications",
+            "keywords": [
+                "certification",
+                "certifications",
+                "certified",
+                "certificate",
+                "credentials"
+            ],
+            "answer": "Certifications include Oracle Database 19c Administration, AWS Cloud Architecture, AWS Cloud Foundations, CCNA Training, Wireshark Advanced Tools and Techniques, Wireshark VoIP."
+        },
+        {
+            "topic": "experience",
+            "keywords": [
+                "experience",
+                "career",
+                "timeline",
+                "years",
+                "history",
+                "background"
+            ],
+            "answer": "Career timeline:\n2025 \u2013 Present: Deputy Director IT at GIFT University \u2014 strategic IT leadership driving digital transformation, smart campus platforms, AI integration, and enterprise infrastructure governance. Scope: 120+ servers, 10,000+ users, 99% uptime focus.\n2022 \u2013 2025: Manager IT at GIFT University \u2014 led infrastructure and IT service management, overseeing campus servers, VMware clusters, and operational delivery teams across ERP and campus systems.\n2021 \u2013 2022: Deputy Manager IT at GIFT University \u2014 managed enterprise systems and day-to-day IT operations, coordinating server platforms, backups, and cross-department technical support.\n2017 \u2013 2021: Assistant Manager IT at GIFT University \u2014 campus network and server administration, expanding from networking into full-stack infrastructure ownership across labs and data centers.\n2009 \u2013 2017: Network Administrator at GIFT University \u2014 built and maintained network infrastructure and security; routing, switching, access control, and Wi-Fi\/VLAN for academic connectivity.\n2007 \u2013 2009: Lab Administrator at GIFT University \u2014 IT lab operations and end-user support; managed computer labs, software deployment, and first-line technical assistance."
+        },
+        {
+            "topic": "contact",
+            "keywords": [
+                "contact",
+                "email",
+                "phone",
+                "reach",
+                "linkedin",
+                "connect"
+            ],
+            "answer": "Contact: mnabeelam@gmail.com | dd.it@gift.edu.pk | LinkedIn available on the homepage."
+        }
+    ]
+}
