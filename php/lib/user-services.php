@@ -377,3 +377,52 @@ function updateOwnAdminPassword(int $userId, string $currentPassword, string $ne
 
     appLog('security: password updated for user id=' . $userId);
 }
+
+function migrateConfigAdminPasswordToDatabase(string $username, string $plainPassword): void
+{
+    if (!databaseReady()) {
+        throw new RuntimeException('Database is not available.');
+    }
+
+    if (strlen($plainPassword) < 8) {
+        throw new InvalidArgumentException('Password must be at least 8 characters.');
+    }
+
+    $username = sanitizeText($username, 80);
+    if ($username === '') {
+        throw new InvalidArgumentException('Username is required.');
+    }
+
+    $hash = password_hash($plainPassword, PASSWORD_DEFAULT);
+    $now = date('c');
+    $existing = findUserByUsername($username);
+
+    if ($existing !== null) {
+        $stmt = db()->prepare(
+            'UPDATE users SET password_hash = :password_hash, updated_at = :updated_at, active = 1 WHERE id = :id'
+        );
+        $stmt->execute([
+            'password_hash' => $hash,
+            'updated_at' => $now,
+            'id' => $existing['id'],
+        ]);
+        appLog('security: migrated admin password to database for "' . $username . '"');
+        return;
+    }
+
+    $stmt = db()->prepare(
+        'INSERT INTO users (username, password_hash, display_name, email, role, active, created_at, updated_at)
+         VALUES (:username, :password_hash, :display_name, :email, :role, 1, :created_at, :updated_at)'
+    );
+    $stmt->execute([
+        'username' => $username,
+        'password_hash' => $hash,
+        'display_name' => $username,
+        'email' => trim(configValue('CONTACT_EMAIL')),
+        'role' => 'super_admin',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ]);
+
+    appLog('security: created database admin user "' . $username . '" from config migration');
+}

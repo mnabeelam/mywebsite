@@ -2224,8 +2224,83 @@
 
   var backupCapability = {
     zip: true,
-    encryption: true
+    encryption: true,
+    databaseReady: false
   };
+
+  function selectedBackupScope() {
+    var selected = document.querySelector('input[name="backup_scope"]:checked');
+    return selected ? selected.value : 'site';
+  }
+
+  function renderBackupDatabasePanel(data) {
+    var wrap = document.getElementById('backupDatabaseSummary');
+    var note = document.getElementById('backupDatabaseNote');
+    if (!wrap) return;
+
+    var db = data.database || {};
+    backupCapability.databaseReady = db.ready === true;
+    wrap.textContent = '';
+
+    if (!db.ready) {
+      if (note) {
+        note.textContent = 'Database is not connected. Site still works with JSON files. Set DB_DRIVER in config/local.php and run scripts/setup-mysql.php for MySQL.';
+      }
+      return;
+    }
+
+    var items = [
+      ['Driver', (db.driver_label || db.driver || '—').toUpperCase()],
+      ['Database', db.name || '—'],
+      ['Admin users', String(db.users || 0)],
+      ['Shop products', String(db.products || 0)],
+      ['Orders', String(db.orders || 0)],
+      ['Contact messages', String(db.contacts || 0)]
+    ];
+    items.forEach(function (item) {
+      var card = document.createElement('div');
+      card.className = 'report-summary-card';
+      card.innerHTML = '<span class="report-summary-label">' + item[0] + '</span><strong>' + item[1] + '</strong>';
+      wrap.appendChild(card);
+    });
+
+    if (note) {
+      note.textContent = db.password_storage || 'Passwords are stored as secure hashes in the database.';
+    }
+  }
+
+  function renderBackupIncludesForScope(data) {
+    var scope = selectedBackupScope();
+    var scopes = data.backup_scopes || [];
+    var match = scopes.find(function (item) { return item.value === scope; });
+    var includes = data.includes || [];
+    if (scope === 'site') {
+      includes = includes.filter(function (line) {
+        return line.indexOf('Database SQL export') === -1 && line.indexOf('SQLite database file copy') === -1;
+      });
+    } else if (scope === 'database') {
+      includes = includes.filter(function (line) {
+        return line.indexOf('Database SQL export') !== -1
+          || line.indexOf('SQLite database file copy') !== -1
+          || line.indexOf('hashed passwords') !== -1;
+      });
+    }
+
+    var includesList = document.getElementById('backupIncludesList');
+    if (includesList) {
+      includesList.textContent = '';
+      if (match && match.description) {
+        var intro = document.createElement('li');
+        intro.textContent = match.description;
+        includesList.appendChild(intro);
+      }
+      includes.forEach(function (item) {
+        var li = document.createElement('li');
+        li.textContent = item;
+        includesList.appendChild(li);
+      });
+    }
+  }
 
   function renderBackupIncludes(data) {
     var includesList = document.getElementById('backupIncludesList');
@@ -2253,12 +2328,7 @@
     }
 
     if (includesList) {
-      includesList.textContent = '';
-      (data.includes || []).forEach(function (item) {
-        var li = document.createElement('li');
-        li.textContent = item;
-        includesList.appendChild(li);
-      });
+      renderBackupIncludesForScope(data);
     }
 
     if (excludesWrap) {
@@ -2300,13 +2370,15 @@
 
     var table = document.createElement('table');
     table.className = 'admin-table';
-    table.innerHTML = '<thead><tr><th>File</th><th>Created</th><th>Size</th><th></th></tr></thead>';
+    table.innerHTML = '<thead><tr><th>File</th><th>Type</th><th>Created</th><th>Size</th><th></th></tr></thead>';
     var tbody = document.createElement('tbody');
 
     backups.forEach(function (item) {
       var tr = document.createElement('tr');
       var fileCell = document.createElement('td');
       fileCell.textContent = item.filename || '';
+      var typeCell = document.createElement('td');
+      typeCell.textContent = item.backup_scope_label || item.backup_scope || 'Site files';
       var createdCell = document.createElement('td');
       createdCell.textContent = formatBackupDate(item.created);
       var sizeCell = document.createElement('td');
@@ -2326,6 +2398,7 @@
       });
       actionCell.appendChild(downloadBtn);
       tr.appendChild(fileCell);
+      tr.appendChild(typeCell);
       tr.appendChild(createdCell);
       tr.appendChild(sizeCell);
       tr.appendChild(actionCell);
@@ -2339,6 +2412,7 @@
   function renderBackupAdmin(data) {
     data = data || {};
     renderBackupSummary(data.summary || {});
+    renderBackupDatabasePanel(data);
     renderBackupIncludes(data);
     renderStoredBackups(data.backups || []);
   }
@@ -3111,6 +3185,21 @@
       showMessage(document.getElementById('dashboardMessage'), error.message, true);
     }
 
+    var scopeFieldset = document.getElementById('backupScopeFieldset');
+    if (scopeFieldset && !scopeFieldset.dataset.bound) {
+      scopeFieldset.dataset.bound = '1';
+      scopeFieldset.addEventListener('change', function () {
+        fetch(API + 'backup-admin.php', { credentials: 'same-origin' })
+          .then(function (response) { return readAdminJson(response); })
+          .then(function (payload) {
+            if (payload.backup) {
+              renderBackupIncludes(payload.backup);
+            }
+          })
+          .catch(function () {});
+      });
+    }
+
     if (!createForm.dataset.bound) {
       createForm.dataset.bound = '1';
       createForm.addEventListener('submit', async function (event) {
@@ -3133,11 +3222,18 @@
           return;
         }
 
+        var scope = selectedBackupScope();
+        if ((scope === 'database' || scope === 'both') && !backupCapability.databaseReady) {
+          showMessage(document.getElementById('dashboardMessage'), 'Database is not connected. Choose Site files only or fix database settings.', true);
+          return;
+        }
+
         createBtn.disabled = true;
         try {
           var latestSession = await fetchSession();
           var body = new FormData(createForm);
           body.append('action', 'create_backup');
+          body.append('backup_scope', scope);
           body.append('csrf_token', latestSession.csrf_token || '');
 
           var response = await fetch(API + 'backup-admin.php', {

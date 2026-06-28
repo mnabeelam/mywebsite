@@ -1146,6 +1146,32 @@ a:hover {
   line-height: 1.45;
 }
 
+.backup-scope-fieldset {
+  margin: 0 0 1rem;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.backup-scope-fieldset legend {
+  padding: 0 6px;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.admin-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
+.admin-radio input {
+  margin-top: 3px;
+}
+
 .backup-danger-panel {
   border-color: rgba(248, 113, 113, 0.35);
   background: rgba(127, 29, 29, 0.12);

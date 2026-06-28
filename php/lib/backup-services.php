@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/site-services.php';
 require_once __DIR__ . '/site-settings.php';
+require_once __DIR__ . '/database-backup.php';
 
-const SITE_BACKUP_VERSION = 2;
+const SITE_BACKUP_VERSION = 3;
 const SITE_BACKUP_PREFIX = 'data/';
 const SITE_BACKUP_MIN_PASSWORD_LENGTH = 8;
 
@@ -215,22 +216,115 @@ function addRelativePathToBackupZip(ZipArchive $zip, string $relativePath, strin
     }
 }
 
-function createSiteBackupZip(?string $destinationPath = null, string $password = ''): array
+function normalizeBackupScope(string $scope): string
 {
+    $scope = strtolower(trim($scope));
+    if (!in_array($scope, ['site', 'database', 'both'], true)) {
+        return 'site';
+    }
+
+    return $scope;
+}
+
+function backupScopeLabel(string $scope): string
+{
+    return match (normalizeBackupScope($scope)) {
+        'database' => 'Database only',
+        'both' => 'Site + database',
+        default => 'Site files only',
+    };
+}
+
+function backupFilenamePrefix(string $scope): string
+{
+    return match (normalizeBackupScope($scope)) {
+        'database' => 'db-backup-',
+        'both' => 'full-backup-',
+        default => 'site-backup-',
+    };
+}
+
+function backupRelativeDirectoriesForScope(string $scope): array
+{
+    $scope = normalizeBackupScope($scope);
+    $dirs = backupRelativeDirectories();
+    if ($scope === 'database') {
+        return [];
+    }
+    if ($scope === 'both') {
+        return array_values(array_filter($dirs, static fn(string $dir): bool => $dir !== 'php/storage/database'));
+    }
+
+    return $dirs;
+}
+
+function backupRelativeFilesForScope(string $scope): array
+{
+    if (normalizeBackupScope($scope) === 'database') {
+        return [];
+    }
+
+    return backupRelativeFiles();
+}
+
+function addDatabaseBackupEntries(ZipArchive $zip, bool $encryptEntries): array
+{
+    if (!databaseBackupAvailable()) {
+        throw new RuntimeException('Database is not available for backup.');
+    }
+
+    $stats = ['files' => 0, 'bytes' => 0];
+    $dump = exportDatabaseToSql();
+    if (!$zip->addFromString(DATABASE_BACKUP_ENTRY, $dump)) {
+        throw new RuntimeException('Could not add database dump to backup.');
+    }
+    if ($encryptEntries) {
+        encryptBackupZipEntry($zip, DATABASE_BACKUP_ENTRY);
+    }
+    $stats['files']++;
+    $stats['bytes'] += strlen($dump);
+
+    $driver = strtolower(trim(configValue('DB_DRIVER', 'sqlite'))) ?: 'sqlite';
+    if ($driver !== 'mysql') {
+        $sqlitePath = sqliteDatabasePath();
+        if (is_readable($sqlitePath)) {
+            if (!$zip->addFile($sqlitePath, DATABASE_SQLITE_ENTRY)) {
+                throw new RuntimeException('Could not add SQLite database file to backup.');
+            }
+            if ($encryptEntries) {
+                encryptBackupZipEntry($zip, DATABASE_SQLITE_ENTRY);
+            }
+            $stats['files']++;
+            $stats['bytes'] += filesize($sqlitePath) ?: 0;
+        }
+    }
+
+    return $stats;
+}
+
+function createBackupZip(string $scope = 'site', ?string $destinationPath = null, string $password = ''): array
+{
+    $scope = normalizeBackupScope($scope);
     $password = normalizeBackupPassword($password);
-    $root = backupProjectRoot();
-    $filename = 'site-backup-' . date('Ymd-His') . '.zip';
+    $filename = backupFilenamePrefix($scope) . date('Ymd-His') . '.zip';
     $destinationPath = $destinationPath ?? (backupStorageDir() . $filename);
 
     $zip = beginBackupZipArchive($destinationPath, $password);
     $stats = ['files' => 0, 'bytes' => 0];
 
-    foreach (backupRelativeFiles() as $relativeFile) {
-        addRelativePathToBackupZip($zip, $relativeFile, $root, $stats, true);
+    foreach (backupRelativeFilesForScope($scope) as $relativeFile) {
+        addRelativePathToBackupZip($zip, $relativeFile, backupProjectRoot(), $stats, true);
     }
 
-    foreach (backupRelativeDirectories() as $relativeDir) {
-        addRelativePathToBackupZip($zip, $relativeDir, $root, $stats, true);
+    foreach (backupRelativeDirectoriesForScope($scope) as $relativeDir) {
+        addRelativePathToBackupZip($zip, $relativeDir, backupProjectRoot(), $stats, true);
+    }
+
+    $databaseMeta = databaseBackupMeta();
+    if ($scope === 'database' || $scope === 'both') {
+        $dbStats = addDatabaseBackupEntries($zip, true);
+        $stats['files'] += $dbStats['files'];
+        $stats['bytes'] += $dbStats['bytes'];
     }
 
     $manifest = [
@@ -238,19 +332,12 @@ function createSiteBackupZip(?string $destinationPath = null, string $password =
         'created' => date('c'),
         'site' => 'Mirza Nabeel Ahmed Portfolio',
         'encrypted' => true,
+        'backup_scope' => $scope,
+        'backup_scope_label' => backupScopeLabel($scope),
+        'database_driver' => $databaseMeta['driver'] ?? 'sqlite',
         'files' => $stats['files'],
         'bytes' => $stats['bytes'],
-        'includes' => [
-            'shop' => true,
-            'certifications' => true,
-            'knowledge' => true,
-            'contact_messages' => true,
-            'visitor_stats' => true,
-            'access_policy' => true,
-            'site_settings' => true,
-            'admin_auth' => true,
-            'uploads' => true,
-        ],
+        'includes' => backupScopeIncludes($scope, $databaseMeta),
     ];
 
     if (!$zip->addFromString('manifest.json', json_encode($manifest, JSON_PRETTY_PRINT))) {
@@ -272,12 +359,53 @@ function createSiteBackupZip(?string $destinationPath = null, string $password =
         'files' => $stats['files'],
         'created' => $manifest['created'],
         'encrypted' => true,
+        'backup_scope' => $scope,
+        'backup_scope_label' => backupScopeLabel($scope),
     ];
+}
+
+/** @return list<string> */
+function backupScopeIncludes(string $scope, array $databaseMeta): array
+{
+    $scope = normalizeBackupScope($scope);
+    $includes = [];
+
+    if ($scope === 'site' || $scope === 'both') {
+        $includes = array_merge($includes, [
+            'Shop products, orders, stock ledger, and product images',
+            'Certifications catalog and uploaded certificate files',
+            'CV knowledge base files and search index',
+            'Contact form messages and visitor statistics',
+            'Site contact settings, access policy, and admin login JSON fallback',
+            'Uploaded certification and CV files',
+        ]);
+        if ($scope === 'site' && (($databaseMeta['driver'] ?? 'sqlite') !== 'mysql')) {
+            $includes[] = 'SQLite database file (php/storage/database/site.sqlite)';
+        }
+    }
+
+    if ($scope === 'database' || $scope === 'both') {
+        $includes[] = 'Database SQL export (users with hashed passwords, shop, certifications, messages, settings)';
+        if (($databaseMeta['driver'] ?? 'sqlite') !== 'mysql') {
+            $includes[] = 'SQLite database file copy (database/site.sqlite)';
+        }
+    }
+
+    return $includes;
+}
+
+function createSiteBackupZip(?string $destinationPath = null, string $password = ''): array
+{
+    return createBackupZip('site', $destinationPath, $password);
 }
 
 function pruneStoredBackups(int $keep = 8): void
 {
-    $files = glob(backupStorageDir() . 'site-backup-*.zip') ?: [];
+    $files = array_merge(
+        glob(backupStorageDir() . 'site-backup-*.zip') ?: [],
+        glob(backupStorageDir() . 'db-backup-*.zip') ?: [],
+        glob(backupStorageDir() . 'full-backup-*.zip') ?: []
+    );
     usort($files, static function (string $a, string $b): int {
         return filemtime($b) <=> filemtime($a);
     });
@@ -291,15 +419,31 @@ function pruneStoredBackups(int $keep = 8): void
 
 function listStoredBackups(): array
 {
-    $files = glob(backupStorageDir() . 'site-backup-*.zip') ?: [];
-    rsort($files);
+    $files = array_merge(
+        glob(backupStorageDir() . 'site-backup-*.zip') ?: [],
+        glob(backupStorageDir() . 'db-backup-*.zip') ?: [],
+        glob(backupStorageDir() . 'full-backup-*.zip') ?: []
+    );
+    usort($files, static function (string $a, string $b): int {
+        return filemtime($b) <=> filemtime($a);
+    });
     $items = [];
 
     foreach ($files as $file) {
+        $scope = 'site';
+        $basename = basename($file);
+        if (str_starts_with($basename, 'db-backup-')) {
+            $scope = 'database';
+        } elseif (str_starts_with($basename, 'full-backup-')) {
+            $scope = 'both';
+        }
+
         $items[] = [
-            'filename' => basename($file),
+            'filename' => $basename,
             'size' => filesize($file) ?: 0,
             'created' => date('c', filemtime($file) ?: time()),
+            'backup_scope' => $scope,
+            'backup_scope_label' => backupScopeLabel($scope),
         ];
     }
 
@@ -328,7 +472,7 @@ function readBackupManifest(string $zipPath, string $password = ''): array
     }
 
     $version = (int) ($manifest['version'] ?? 0);
-    if ($version !== SITE_BACKUP_VERSION && $version !== 1) {
+    if (!in_array($version, [1, 2, SITE_BACKUP_VERSION], true)) {
         throw new InvalidArgumentException('This backup version is not supported.');
     }
 
@@ -348,9 +492,25 @@ function restoreSiteBackupZip(string $zipPath, string $password = ''): array
     $zip = openBackupZipArchive($zipPath, $password);
 
     $restored = 0;
+    $databaseDump = null;
+    $databaseSqlite = null;
     for ($index = 0; $index < $zip->numFiles; $index++) {
         $entryName = $zip->getNameIndex($index);
-        if ($entryName === false || $entryName === 'manifest.json' || !backupZipEntryIsSafe($entryName)) {
+        if ($entryName === false || $entryName === 'manifest.json') {
+            continue;
+        }
+
+        if ($entryName === DATABASE_BACKUP_ENTRY) {
+            $databaseDump = $zip->getFromIndex($index);
+            continue;
+        }
+
+        if ($entryName === DATABASE_SQLITE_ENTRY) {
+            $databaseSqlite = $zip->getFromIndex($index);
+            continue;
+        }
+
+        if (!backupZipEntryIsSafe($entryName)) {
             continue;
         }
 
@@ -381,6 +541,23 @@ function restoreSiteBackupZip(string $zipPath, string $password = ''): array
 
     $zip->close();
 
+    $databaseRestored = false;
+    if (is_string($databaseDump) && $databaseDump !== '' && databaseReady()) {
+        importDatabaseSql($databaseDump);
+        $databaseRestored = true;
+    } elseif (is_string($databaseSqlite) && $databaseSqlite !== '') {
+        $driver = strtolower(trim(configValue('DB_DRIVER', 'sqlite'))) ?: 'sqlite';
+        if ($driver !== 'mysql') {
+            $target = sqliteDatabasePath();
+            $targetDir = dirname($target);
+            if (!is_dir($targetDir) && !mkdir($targetDir, 0700, true)) {
+                throw new RuntimeException('Could not prepare SQLite database directory.');
+            }
+            file_put_contents($target, $databaseSqlite, LOCK_EX);
+            $databaseRestored = true;
+        }
+    }
+
     require_once __DIR__ . '/knowledge-builder.php';
     if (function_exists('rebuildKnowledgeSearchIndex')) {
         rebuildKnowledgeSearchIndex();
@@ -388,6 +565,8 @@ function restoreSiteBackupZip(string $zipPath, string $password = ''): array
 
     return [
         'restored_files' => $restored,
+        'restored_database' => $databaseRestored,
+        'backup_scope' => normalizeBackupScope((string) ($manifest['backup_scope'] ?? 'site')),
     ];
 }
 
@@ -423,7 +602,9 @@ function clearDirectoryContents(string $absoluteDir, bool $removeDir = false): v
 function resetAllSiteData(bool $keepAdminAuth = true, string $backupPassword = ''): array
 {
     $root = backupProjectRoot();
-    $autoBackup = createSiteBackupZip(null, $backupPassword);
+    $autoBackup = databaseBackupAvailable()
+        ? createBackupZip('both', null, $backupPassword)
+        : createSiteBackupZip(null, $backupPassword);
 
     require_once __DIR__ . '/shop-services.php';
     require_once __DIR__ . '/cert-services.php';
@@ -511,20 +692,21 @@ function siteDataSummary(): array
 
 function backupAdminSummary(): array
 {
+    $database = databaseBackupMeta();
+
     return [
         'summary' => siteDataSummary(),
+        'database' => $database,
         'backups' => listStoredBackups(),
         'zip_available' => backupZipAvailable(),
         'encryption_available' => backupZipEncryptionAvailable(),
         'min_password_length' => SITE_BACKUP_MIN_PASSWORD_LENGTH,
-        'includes' => [
-            'Shop products, orders, stock ledger, and product images',
-            'Certifications catalog and uploaded certificate files',
-            'CV knowledge base files and search index',
-            'Contact form messages and visitor statistics',
-            'Site contact settings, access policy, and admin login (stored in dashboard)',
-            'SQLite database (users, shop, certifications, messages, and settings)',
+        'backup_scopes' => [
+            ['value' => 'site', 'label' => 'Site files only', 'description' => 'Shop, certifications, knowledge, uploads, JSON settings — no database export.'],
+            ['value' => 'database', 'label' => 'Database only', 'description' => 'Users (hashed passwords), shop rows, certifications, messages, and settings tables.'],
+            ['value' => 'both', 'label' => 'Site + database', 'description' => 'Recommended full backup — website files plus SQL database export.'],
         ],
+        'includes' => backupScopeIncludes('both', $database),
         'excludes' => [
             [
                 'title' => 'Server config (config/local.php)',
@@ -545,7 +727,7 @@ function backupAdminSummary(): array
 function sanitizeBackupFilename(string $filename): string
 {
     $filename = basename($filename);
-    if (!preg_match('/^site-backup-\d{8}-\d{6}\.zip$/', $filename)) {
+    if (!preg_match('/^(site|db|full)-backup-\d{8}-\d{6}\.zip$/', $filename)) {
         throw new InvalidArgumentException('Invalid backup filename.');
     }
 

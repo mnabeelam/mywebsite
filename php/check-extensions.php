@@ -1,7 +1,7 @@
 <?php
-header('Content-Type: text/plain; charset=utf-8');
-echo 'curl loaded: ' . (function_exists('curl_init') ? 'YES' : 'NO') . "\n";
-echo 'openssl loaded: ' . (extension_loaded('openssl') ? 'YES' : 'NO') . "\n";
-echo 'allow_url_fopen: ' . (ini_get('allow_url_fopen') ? 'YES' : 'NO') . "\n";
-echo 'openssl.cafile: ' . (ini_get('openssl.cafile') ?: 'not set') . "\n";
-echo 'PHP version: ' . PHP_VERSION . "\n";
+header('Content-Type: text/plain');
+echo 'pdo_sqlite: ' . (extension_loaded('pdo_sqlite') ? 'YES' : 'NO') . "\n";
+echo 'pdo_mysql: ' . (extension_loaded('pdo_mysql') ? 'YES' : 'NO') . "\n";
+if (function_exists('php_ini_loaded_file')) {
+    echo 'ini: ' . php_ini_loaded_file() . "\n";
+}

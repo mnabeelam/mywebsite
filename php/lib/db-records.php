@@ -462,6 +462,8 @@ function dbDatabaseSummary(): array
     return [
         'ready' => true,
         'driver' => strtolower(trim(configValue('DB_DRIVER', 'sqlite'))) ?: 'sqlite',
+        'host' => trim(configValue('DB_HOST', '127.0.0.1')),
+        'name' => trim(configValue('DB_NAME', 'portfolio')),
         'users' => (int) db()->query('SELECT COUNT(*) FROM users')->fetchColumn(),
         'products' => (int) db()->query('SELECT COUNT(*) FROM shop_products')->fetchColumn(),
         'orders' => (int) db()->query('SELECT COUNT(*) FROM shop_orders')->fetchColumn(),

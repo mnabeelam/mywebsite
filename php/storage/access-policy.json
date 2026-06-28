@@ -3,6 +3,69 @@
     "admin_ip_whitelist": [],
     "visitor_log": [
         {
+            "id": "9e031dcc7ac0",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T11:01:14+00:00"
+        },
+        {
+            "id": "9b0742c2898d",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:52:35+00:00"
+        },
+        {
+            "id": "78d55d1d7a5b",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:52:35+00:00"
+        },
+        {
+            "id": "9e3c5b63c661",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:52:32+00:00"
+        },
+        {
+            "id": "a2ebbc6ce777",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:48:14+00:00"
+        },
+        {
+            "id": "6f2b4edb8937",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:48:14+00:00"
+        },
+        {
+            "id": "c3dce55d395e",
+            "ip": "127.0.0.1",
+            "referrer": "mywebsite.local",
+            "referrer_url": "http:\/\/mywebsite.local\/index.php",
+            "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/148.0.0.0 Safari\/537.36",
+            "page": "\/index.php",
+            "time": "2026-06-28T10:48:11+00:00"
+        },
+        {
             "id": "7ebb6573f3c1",
             "ip": "127.0.0.1",
             "referrer": "mywebsite.local",

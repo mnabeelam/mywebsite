@@ -86,8 +86,29 @@ switch ($action) {
 
             jsonResponse([
                 'status' => 'ok',
-                'message' => 'Password updated successfully.',
+                'message' => 'Password updated successfully in the database.',
                 'settings' => adminSettingsSummary(),
+            ]);
+            break;
+        }
+
+        if (databaseReady()) {
+            if (!verifyAdminCredentials($username, $current)) {
+                jsonResponse(['error' => 'Current password is incorrect.'], 401);
+            }
+
+            try {
+                migrateConfigAdminPasswordToDatabase($username, $newPass);
+            } catch (InvalidArgumentException $e) {
+                jsonResponse(['error' => $e->getMessage()], 400);
+            }
+
+            loginAdmin($username);
+            jsonResponse([
+                'status' => 'ok',
+                'message' => 'Password saved securely in the database. You can remove ADMIN_PASSWORD from config/local.php.',
+                'settings' => adminSettingsSummary(),
+                'two_factor' => admin2faPublicSummary(),
             ]);
             break;
         }

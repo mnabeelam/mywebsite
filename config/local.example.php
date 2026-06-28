@@ -24,12 +24,18 @@ return [
     'ADMIN_IP_WHITELIST' => '',
 
     // Database — SQLite is used by default (auto-created under php/storage/database/).
+    // Passwords are stored as secure hashes in the `users` table (never plain text).
     'DB_DRIVER' => 'sqlite',
     'DB_PATH' => '',
-    // MySQL (set DB_DRIVER => 'mysql' and fill in below):
+    // MySQL — set DB_DRIVER => 'mysql', fill credentials, then run: php scripts/setup-mysql.php
     'DB_HOST' => '127.0.0.1',
     'DB_PORT' => '3306',
     'DB_NAME' => 'portfolio',
-    'DB_USER' => '',
-    'DB_PASSWORD' => '',
+    'DB_USER' => 'portfolio_user',
+    'DB_PASSWORD' => 'change_this_password',
+    // Optional: MySQL admin account used only by scripts/setup-mysql.php
+    'DB_SETUP_USER' => 'root',
+    'DB_SETUP_PASSWORD' => '',
+    // Prefer empty ADMIN_PASSWORD once database user exists — use admin panel to set password.
+    // ADMIN_PASSWORD is only a one-time bootstrap fallback before MySQL/SQLite seeding.
 ];

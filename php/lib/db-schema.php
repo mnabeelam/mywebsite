@@ -4,6 +4,16 @@ declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/site-settings.php';
 
+function dbDriverName(PDO $pdo): string
+{
+    return (string) $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+}
+
+function isMysqlPdo(PDO $pdo): bool
+{
+    return dbDriverName($pdo) === 'mysql';
+}
+
 function runDatabaseMigrations(PDO $pdo): void
 {
     static $done = false;
@@ -22,6 +32,17 @@ function runDatabaseMigrations(PDO $pdo): void
 }
 
 function createDatabaseTables(PDO $pdo): void
+{
+    if (isMysqlPdo($pdo)) {
+        createMysqlDatabaseTables($pdo);
+    } else {
+        createSqliteDatabaseTables($pdo);
+    }
+
+    seedInitialAdminUser($pdo);
+}
+
+function createSqliteDatabaseTables(PDO $pdo): void
 {
     $statements = [
         'CREATE TABLE IF NOT EXISTS site_settings (
@@ -121,8 +142,114 @@ function createDatabaseTables(PDO $pdo): void
     foreach ($statements as $sql) {
         $pdo->exec($sql);
     }
+}
 
-    seedInitialAdminUser($pdo);
+function createMysqlDatabaseTables(PDO $pdo): void
+{
+    $statements = [
+        'CREATE TABLE IF NOT EXISTS site_settings (
+            setting_key VARCHAR(191) PRIMARY KEY,
+            setting_value LONGTEXT NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS users (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(80) NOT NULL UNIQUE,
+            password_hash VARCHAR(255) NOT NULL,
+            display_name VARCHAR(120) NOT NULL DEFAULT "",
+            email VARCHAR(180) NOT NULL DEFAULT "",
+            role VARCHAR(40) NOT NULL DEFAULT "viewer",
+            active TINYINT(1) NOT NULL DEFAULT 1,
+            created_at VARCHAR(40) NOT NULL,
+            updated_at VARCHAR(40) NOT NULL,
+            last_login_at VARCHAR(40) NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS contact_messages (
+            id VARCHAR(64) PRIMARY KEY,
+            name VARCHAR(120) NOT NULL,
+            email VARCHAR(180) NOT NULL,
+            service VARCHAR(120) NOT NULL DEFAULT "",
+            message TEXT NOT NULL,
+            ip VARCHAR(80) NOT NULL DEFAULT "",
+            created_at VARCHAR(40) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS shop_products (
+            id VARCHAR(64) PRIMARY KEY,
+            brand VARCHAR(80) NOT NULL DEFAULT "",
+            name VARCHAR(200) NOT NULL,
+            description TEXT NOT NULL,
+            price DECIMAL(12,2) NOT NULL DEFAULT 0,
+            cost_price DECIMAL(12,2) NOT NULL DEFAULT 0,
+            currency VARCHAR(8) NOT NULL DEFAULT "PKR",
+            category VARCHAR(80) NOT NULL DEFAULT "",
+            track_stock TINYINT(1) NOT NULL DEFAULT 0,
+            stock INT NOT NULL DEFAULT 0,
+            active TINYINT(1) NOT NULL DEFAULT 0,
+            images_json LONGTEXT NOT NULL,
+            created_at VARCHAR(40) NOT NULL,
+            updated_at VARCHAR(40) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS shop_orders (
+            id VARCHAR(64) PRIMARY KEY,
+            product_id VARCHAR(64) NOT NULL,
+            product_name VARCHAR(200) NOT NULL DEFAULT "",
+            quantity INT NOT NULL DEFAULT 1,
+            unit_price DECIMAL(12,2) NOT NULL DEFAULT 0,
+            total DECIMAL(12,2) NOT NULL DEFAULT 0,
+            currency VARCHAR(8) NOT NULL DEFAULT "PKR",
+            customer_name VARCHAR(120) NOT NULL,
+            customer_email VARCHAR(180) NOT NULL,
+            customer_phone VARCHAR(40) NOT NULL DEFAULT "",
+            address TEXT NOT NULL,
+            notes TEXT NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT "pending",
+            ip VARCHAR(80) NOT NULL DEFAULT "",
+            created_at VARCHAR(40) NOT NULL,
+            updated_at VARCHAR(40) NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS shop_ledger (
+            id VARCHAR(64) PRIMARY KEY,
+            type VARCHAR(20) NOT NULL,
+            product_id VARCHAR(64) NOT NULL DEFAULT "",
+            brand VARCHAR(80) NOT NULL DEFAULT "",
+            product_name VARCHAR(200) NOT NULL DEFAULT "",
+            quantity INT NOT NULL DEFAULT 0,
+            unit_cost DECIMAL(12,2) NOT NULL DEFAULT 0,
+            unit_price DECIMAL(12,2) NOT NULL DEFAULT 0,
+            total_cost DECIMAL(12,2) NOT NULL DEFAULT 0,
+            total_sale DECIMAL(12,2) NOT NULL DEFAULT 0,
+            profit DECIMAL(12,2) NOT NULL DEFAULT 0,
+            currency VARCHAR(8) NOT NULL DEFAULT "PKR",
+            reference VARCHAR(80) NOT NULL DEFAULT "",
+            note TEXT NOT NULL,
+            created_at VARCHAR(40) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE TABLE IF NOT EXISTS certifications (
+            id VARCHAR(64) PRIMARY KEY,
+            title VARCHAR(200) NOT NULL,
+            issuer VARCHAR(200) NOT NULL DEFAULT "",
+            year VARCHAR(20) NOT NULL DEFAULT "",
+            knowledge TEXT NOT NULL,
+            description TEXT NOT NULL,
+            file_path VARCHAR(300) NOT NULL DEFAULT "",
+            active TINYINT(1) NOT NULL DEFAULT 1,
+            sort_order INT NOT NULL DEFAULT 0,
+            created_at VARCHAR(40) NOT NULL,
+            updated_at VARCHAR(40) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
+        'CREATE INDEX idx_shop_orders_created ON shop_orders(created_at)',
+        'CREATE INDEX idx_contact_messages_created ON contact_messages(created_at)',
+        'CREATE INDEX idx_users_role ON users(role)',
+    ];
+
+    foreach ($statements as $sql) {
+        try {
+            $pdo->exec($sql);
+        } catch (PDOException $e) {
+            if (!str_contains($e->getMessage(), 'Duplicate key name')) {
+                throw $e;
+            }
+        }
+    }
 }
 
 function dbSetting(PDO $pdo, string $key, string $default = ''): string
@@ -136,10 +263,17 @@ function dbSetting(PDO $pdo, string $key, string $default = ''): string
 
 function dbSetSetting(PDO $pdo, string $key, string $value): void
 {
-    $stmt = $pdo->prepare(
-        'INSERT INTO site_settings (setting_key, setting_value) VALUES (:key, :value)
-         ON CONFLICT(setting_key) DO UPDATE SET setting_value = excluded.setting_value'
-    );
+    if (isMysqlPdo($pdo)) {
+        $stmt = $pdo->prepare(
+            'INSERT INTO site_settings (setting_key, setting_value) VALUES (:key, :value)
+             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)'
+        );
+    } else {
+        $stmt = $pdo->prepare(
+            'INSERT INTO site_settings (setting_key, setting_value) VALUES (:key, :value)
+             ON CONFLICT(setting_key) DO UPDATE SET setting_value = excluded.setting_value'
+        );
+    }
     $stmt->execute(['key' => $key, 'value' => $value]);
 }
 
@@ -220,10 +354,10 @@ function importContactMessagesJson(PDO $pdo): void
     }
 
     $files = glob($dir . '/msg_*.json') ?: [];
-    $stmt = $pdo->prepare(
-        'INSERT OR IGNORE INTO contact_messages (id, name, email, service, message, ip, created_at)
-         VALUES (:id, :name, :email, :service, :message, :ip, :created_at)'
-    );
+    $insertSql = isMysqlPdo($pdo)
+        ? 'INSERT IGNORE INTO contact_messages (id, name, email, service, message, ip, created_at) VALUES (:id, :name, :email, :service, :message, :ip, :created_at)'
+        : 'INSERT OR IGNORE INTO contact_messages (id, name, email, service, message, ip, created_at) VALUES (:id, :name, :email, :service, :message, :ip, :created_at)';
+    $stmt = $pdo->prepare($insertSql);
 
     foreach ($files as $file) {
         $data = json_decode((string) file_get_contents($file), true);
@@ -255,12 +389,16 @@ function importShopCatalogJson(PDO $pdo): void
         return;
     }
 
-    $stmt = $pdo->prepare(
-        'INSERT OR IGNORE INTO shop_products
+    $insertSql = isMysqlPdo($pdo)
+        ? 'INSERT IGNORE INTO shop_products
          (id, brand, name, description, price, cost_price, currency, category, track_stock, stock, active, images_json, created_at, updated_at)
          VALUES
          (:id, :brand, :name, :description, :price, :cost_price, :currency, :category, :track_stock, :stock, :active, :images_json, :created_at, :updated_at)'
-    );
+        : 'INSERT OR IGNORE INTO shop_products
+         (id, brand, name, description, price, cost_price, currency, category, track_stock, stock, active, images_json, created_at, updated_at)
+         VALUES
+         (:id, :brand, :name, :description, :price, :cost_price, :currency, :category, :track_stock, :stock, :active, :images_json, :created_at, :updated_at)';
+    $stmt = $pdo->prepare($insertSql);
 
     foreach ($data['products'] as $product) {
         if (!is_array($product)) {
@@ -301,12 +439,16 @@ function importShopOrdersJson(PDO $pdo): void
     }
 
     $files = glob($dir . '/ord_*.json') ?: [];
-    $stmt = $pdo->prepare(
-        'INSERT OR IGNORE INTO shop_orders
+    $insertSql = isMysqlPdo($pdo)
+        ? 'INSERT IGNORE INTO shop_orders
          (id, product_id, product_name, quantity, unit_price, total, currency, customer_name, customer_email, customer_phone, address, notes, status, ip, created_at, updated_at)
          VALUES
          (:id, :product_id, :product_name, :quantity, :unit_price, :total, :currency, :customer_name, :customer_email, :customer_phone, :address, :notes, :status, :ip, :created_at, :updated_at)'
-    );
+        : 'INSERT OR IGNORE INTO shop_orders
+         (id, product_id, product_name, quantity, unit_price, total, currency, customer_name, customer_email, customer_phone, address, notes, status, ip, created_at, updated_at)
+         VALUES
+         (:id, :product_id, :product_name, :quantity, :unit_price, :total, :currency, :customer_name, :customer_email, :customer_phone, :address, :notes, :status, :ip, :created_at, :updated_at)';
+    $stmt = $pdo->prepare($insertSql);
 
     foreach ($files as $file) {
         $data = json_decode((string) file_get_contents($file), true);
@@ -346,12 +488,16 @@ function importShopLedgerJson(PDO $pdo): void
         return;
     }
 
-    $stmt = $pdo->prepare(
-        'INSERT OR IGNORE INTO shop_ledger
+    $insertSql = isMysqlPdo($pdo)
+        ? 'INSERT IGNORE INTO shop_ledger
          (id, type, product_id, brand, product_name, quantity, unit_cost, unit_price, total_cost, total_sale, profit, currency, reference, note, created_at)
          VALUES
          (:id, :type, :product_id, :brand, :product_name, :quantity, :unit_cost, :unit_price, :total_cost, :total_sale, :profit, :currency, :reference, :note, :created_at)'
-    );
+        : 'INSERT OR IGNORE INTO shop_ledger
+         (id, type, product_id, brand, product_name, quantity, unit_cost, unit_price, total_cost, total_sale, profit, currency, reference, note, created_at)
+         VALUES
+         (:id, :type, :product_id, :brand, :product_name, :quantity, :unit_cost, :unit_price, :total_cost, :total_sale, :profit, :currency, :reference, :note, :created_at)';
+    $stmt = $pdo->prepare($insertSql);
 
     foreach ($data['entries'] as $entry) {
         if (!is_array($entry)) {
@@ -389,12 +535,16 @@ function importCertificationsJson(PDO $pdo): void
         return;
     }
 
-    $stmt = $pdo->prepare(
-        'INSERT OR IGNORE INTO certifications
+    $insertSql = isMysqlPdo($pdo)
+        ? 'INSERT IGNORE INTO certifications
          (id, title, issuer, year, knowledge, description, file_path, active, sort_order, created_at, updated_at)
          VALUES
          (:id, :title, :issuer, :year, :knowledge, :description, :file_path, :active, :sort_order, :created_at, :updated_at)'
-    );
+        : 'INSERT OR IGNORE INTO certifications
+         (id, title, issuer, year, knowledge, description, file_path, active, sort_order, created_at, updated_at)
+         VALUES
+         (:id, :title, :issuer, :year, :knowledge, :description, :file_path, :active, :sort_order, :created_at, :updated_at)';
+    $stmt = $pdo->prepare($insertSql);
 
     foreach ($data['certifications'] as $cert) {
         if (!is_array($cert)) {

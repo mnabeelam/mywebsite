@@ -51,11 +51,16 @@ switch ($action) {
 
             $password = normalizeBackupPassword((string) ($_POST['backup_password'] ?? ''));
             validateBackupPassword($password);
+            $scope = normalizeBackupScope((string) ($_POST['backup_scope'] ?? 'site'));
 
-            $result = createSiteBackupZip(null, $password);
+            if (($scope === 'database' || $scope === 'both') && !databaseBackupAvailable()) {
+                jsonResponse(['error' => 'Database backup is unavailable. Check DB_DRIVER and MySQL/SQLite settings in config/local.php.'], 400);
+            }
+
+            $result = createBackupZip($scope, null, $password);
             jsonResponse([
                 'status' => 'ok',
-                'message' => 'Password-protected backup created. Use the same password to restore it.',
+                'message' => backupScopeLabel($scope) . ' backup created. Use the same password to restore it.',
                 'created' => $result,
                 'backup' => backupAdminSummary(),
             ]);

@@ -579,9 +579,22 @@ if (!isAdminAuthenticated()) {
       </section>
 
       <section class="admin-panel">
+        <h2>Database &amp; Authentication</h2>
+        <p class="admin-note">Admin passwords are stored as secure hashes in the database — never plain text. Configure MySQL in <code>config/local.php</code> or keep the default SQLite file.</p>
+        <div id="backupDatabaseSummary" class="report-summary"></div>
+        <p id="backupDatabaseNote" class="admin-note"></p>
+      </section>
+
+      <section class="admin-panel">
         <h2>Create Backup</h2>
-        <p class="admin-note">Creates a password-protected ZIP archive of shop inventory, certifications, knowledge base, contact messages, visitor stats, site settings, access policy, admin login, and uploaded files.</p>
+        <p class="admin-note">Choose what to include, then create a password-protected ZIP archive.</p>
         <p id="backupCapabilityNote" class="admin-note admin-warning" hidden></p>
+        <fieldset id="backupScopeFieldset" class="backup-scope-fieldset">
+          <legend>Backup type</legend>
+          <label class="admin-radio"><input type="radio" name="backup_scope" value="site" checked> Site files only</label>
+          <label class="admin-radio"><input type="radio" name="backup_scope" value="database"> Database only</label>
+          <label class="admin-radio"><input type="radio" name="backup_scope" value="both"> Site + database (recommended)</label>
+        </fieldset>
         <ul id="backupIncludesList" class="backup-detail-list admin-note"></ul>
         <div id="backupExcludesWrap" class="backup-excludes admin-note"></div>
         <form id="createBackupForm" class="admin-product-form">
