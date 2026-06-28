@@ -3,6 +3,8 @@
 
 > **Updated June 2026:** See [CURRENT_GUIDE.md](CURRENT_GUIDE.md) for the current PHP v5 site. OpenAI is **optional** — the Portfolio Assistant works without an API key.
 
+> **GitHub + Cursor:** See [CURSOR_GITHUB_INTEGRATION.md](CURSOR_GITHUB_INTEGRATION.md) — use `config/github.local.php` + `scripts/github-api-integration.ps1`.
+
 You do NOT need to edit code yourself. Follow each step in order.
 When a step says "Ask Cursor AI", copy the message into the chat.
 
