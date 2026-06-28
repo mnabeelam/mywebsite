@@ -71,6 +71,7 @@
     content: 'content.view',
     shop: 'shop.view',
     backup: 'backup.view',
+    updates: 'backup.view',
     users: 'users.view'
   };
 
@@ -364,11 +365,14 @@
 
     loadKnowledgeStatus();
     loadSiteStats();
+    loadRuntimeUpgradeBanner();
     loadAccountSettings(session);
     loadShopAdmin(session);
     loadCertAdmin(session);
     loadBackupAdmin(session);
     loadUsersAdmin(session);
+    bindRuntimeUpgradeControls();
+    bindRuntimeUpdatesTab(session);
     bindAccessControls(session);
     bindVisitorControls();
     initAdminTabs(initialTab);
@@ -531,6 +535,9 @@
       try {
         sessionStorage.setItem('adminActiveTab', tabName);
       } catch (error) {}
+      if (tabName === 'updates') {
+        loadUpdatesAdminPanel();
+      }
     }
 
     tabs.forEach(function (tab) {
@@ -2366,6 +2373,723 @@
     URL.revokeObjectURL(url);
   }
 
+  var runtimeUpgradePollId = null;
+  var runtimeUpgradePlanCache = null;
+
+  function stopRuntimeUpgradePoll() {
+    if (runtimeUpgradePollId) {
+      clearInterval(runtimeUpgradePollId);
+      runtimeUpgradePollId = null;
+    }
+  }
+
+  function startRuntimeUpgradePoll() {
+    stopRuntimeUpgradePoll();
+    runtimeUpgradePollId = setInterval(function () {
+      pollRuntimeUpgradeJob();
+    }, 3000);
+  }
+
+  function openRuntimeUpgradeModal() {
+    var modal = document.getElementById('runtimeUpgradeModal');
+    if (modal) modal.hidden = false;
+    renderRuntimeImpactSummaries(runtimeUpgradePlanCache || runtimeDefaultImpactPlan());
+    fetchRuntimeUpgradePlan().then(function (plan) {
+      runtimeUpgradePlanCache = plan;
+      renderRuntimeUpgradeModal(plan);
+      updateRuntimeUpgradeBanner(plan);
+    }).catch(function (error) {
+      var summary = document.getElementById('runtimeUpgradeModalSummary');
+      if (summary) {
+        summary.textContent = 'Live check unavailable (' + error.message + '). Default guidance is shown below.';
+      }
+      renderRuntimeImpactSummaries(runtimeDefaultImpactPlan());
+    });
+  }
+
+  function closeRuntimeUpgradeModal() {
+    var modal = document.getElementById('runtimeUpgradeModal');
+    if (modal) modal.hidden = true;
+    var confirmInput = document.getElementById('runtimeUpgradeConfirm');
+    if (confirmInput) confirmInput.value = '';
+  }
+
+  function updateUpdatesNavBadge(plan) {
+    var badge = document.getElementById('updatesNavBadge');
+    if (!badge) return;
+    var updates = plan.updates_available || 0;
+    if (updates > 0) {
+      badge.hidden = false;
+      badge.textContent = String(updates);
+    } else {
+      badge.hidden = true;
+      badge.textContent = '';
+    }
+  }
+
+  function formatHistoryType(entry) {
+    var type = entry.type || '';
+    if (type === 'deferred') {
+      var mode = entry.mode || '';
+      if (mode === 'remind_later') return 'Deferred — remind later';
+      if (mode === 'tab_only') return 'Cancelled — saved in System Updates';
+      if (mode === 'ask_again') return 'Closed — ask again next visit';
+      return 'Deferred';
+    }
+    if (type === 'upgrade_completed') return 'Upgrade completed';
+    if (type === 'upgrade_failed') return 'Upgrade failed';
+    return type || 'Event';
+  }
+
+  function renderUpdatesAdminPanel(plan) {
+    var reminder = document.getElementById('updatesReminderStatus');
+    var clearBtn = document.getElementById('updatesClearDeferBtn');
+    var pendingMeta = document.getElementById('updatesPendingMeta');
+    var pendingWrap = document.getElementById('updatesPendingWrap');
+    var historyWrap = document.getElementById('updatesHistoryWrap');
+    if (!pendingMeta || !pendingWrap || !historyWrap) return;
+
+    var prefs = plan.prefs || {};
+    var suppressed = plan.banner_suppressed || prefs.banner_suppressed;
+    var mode = prefs.suppress_mode || '';
+
+    if (reminder) {
+      if ((plan.updates_available || 0) === 0) {
+        reminder.textContent = 'All monitored runtimes are up to date. No pending upgrades.';
+      } else if (!suppressed) {
+        reminder.textContent = 'Banner reminders are active. Pending updates also appear on this tab.';
+      } else if (mode === 'remind_later') {
+        reminder.textContent = 'You chose to upgrade later. The banner is hidden until pending package versions change.';
+      } else if (mode === 'tab_only') {
+        reminder.textContent = 'You cancelled the upgrade prompt. Pending updates are listed below — review and approve when ready.';
+      } else {
+        reminder.textContent = 'Reminder preferences saved.';
+      }
+    }
+
+    if (clearBtn) {
+      clearBtn.hidden = !suppressed;
+    }
+
+    var pending = (plan.packages || []).filter(function (pkg) {
+      return pkg.update_available;
+    });
+    if (pending.length) {
+      pendingMeta.textContent = pending.length + ' package(s) waiting for approval.';
+    } else {
+      pendingMeta.textContent = 'No pending runtime upgrades.';
+    }
+
+    pendingWrap.textContent = '';
+    if (!pending.length) {
+      pendingWrap.innerHTML = '<p class="admin-note">Nothing pending.</p>';
+    } else {
+      var pendingTable = document.createElement('table');
+      pendingTable.className = 'admin-table';
+      pendingTable.innerHTML = '<thead><tr><th>Package</th><th>Installed</th><th>Available</th><th>Site impact</th></tr></thead>';
+      var tbody = document.createElement('tbody');
+      pending.forEach(function (pkg) {
+        var row = document.createElement('tr');
+        [
+          pkg.label || pkg.name || '',
+          pkg.installed || '—',
+          pkg.latest_stable || '—',
+          pkg.site_impact || ''
+        ].forEach(function (text) {
+          var td = document.createElement('td');
+          td.textContent = text;
+          row.appendChild(td);
+        });
+        tbody.appendChild(row);
+      });
+      pendingTable.appendChild(tbody);
+      pendingWrap.appendChild(pendingTable);
+    }
+
+    var history = plan.history || [];
+    historyWrap.textContent = '';
+    if (!history.length) {
+      historyWrap.innerHTML = '<p class="admin-note">No upgrade history yet.</p>';
+      return;
+    }
+
+    var historyTable = document.createElement('table');
+    historyTable.className = 'admin-table';
+    historyTable.innerHTML = '<thead><tr><th>Date &amp; time</th><th>Event</th><th>By</th><th>Packages</th><th>Details</th></tr></thead>';
+    var historyBody = document.createElement('tbody');
+    history.forEach(function (entry) {
+      var row = document.createElement('tr');
+      var packages = (entry.packages_pending || entry.packages_upgraded || []).join(', ');
+      var details = entry.note || '';
+      if (entry.compatibility_ok === false && entry.type === 'upgrade_completed') {
+        details = (details ? details + ' ' : '') + 'Compatibility check reported issues.';
+      }
+      [
+        formatVisitorTime(entry.at),
+        formatHistoryType(entry),
+        entry.by || '—',
+        packages || '—',
+        details || '—'
+      ].forEach(function (text) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        row.appendChild(td);
+      });
+      historyBody.appendChild(row);
+    });
+    historyTable.appendChild(historyBody);
+    historyWrap.appendChild(historyTable);
+  }
+
+  async function loadUpdatesAdminPanel() {
+    try {
+      var plan = await fetchRuntimeUpgradePlan();
+      runtimeUpgradePlanCache = plan;
+      renderUpdatesAdminPanel(plan);
+      updateUpdatesNavBadge(plan);
+    } catch (error) {
+      var pendingMeta = document.getElementById('updatesPendingMeta');
+      if (pendingMeta) pendingMeta.textContent = error.message;
+    }
+  }
+
+  function bindRuntimeUpgradeControls() {
+    var cancelBtn = document.getElementById('runtimeUpgradeCancelBtn');
+    if (cancelBtn && !cancelBtn.dataset.bound) {
+      cancelBtn.dataset.bound = '1';
+      cancelBtn.addEventListener('click', function () {
+        cancelRuntimeUpgrade();
+      });
+    }
+
+    var approveBtn = document.getElementById('runtimeUpgradeApproveBtn');
+    if (approveBtn && !approveBtn.dataset.bound) {
+      approveBtn.dataset.bound = '1';
+      approveBtn.addEventListener('click', function () {
+        approveRuntimeUpgrade();
+      });
+    }
+
+    var reviewBtn = document.getElementById('runtimeUpgradeReviewBtn');
+    if (reviewBtn && !reviewBtn.dataset.bound) {
+      reviewBtn.dataset.bound = '1';
+      reviewBtn.addEventListener('click', function () {
+        openRuntimeUpgradeModal();
+      });
+    }
+
+    var panelBtn = document.getElementById('runtimePanelApproveBtn');
+    if (panelBtn && !panelBtn.dataset.bound) {
+      panelBtn.dataset.bound = '1';
+      panelBtn.addEventListener('click', function () {
+        openRuntimeUpgradeModal();
+      });
+    }
+  }
+
+  function bindRuntimeUpdatesTab(session) {
+    var reviewBtn = document.getElementById('updatesReviewBtn');
+    if (reviewBtn && !reviewBtn.dataset.bound) {
+      reviewBtn.dataset.bound = '1';
+      reviewBtn.addEventListener('click', function () {
+        openRuntimeUpgradeModal();
+      });
+    }
+
+    var clearBtn = document.getElementById('updatesClearDeferBtn');
+    if (clearBtn && !clearBtn.dataset.bound) {
+      clearBtn.dataset.bound = '1';
+      clearBtn.addEventListener('click', function () {
+        clearRuntimeDeferPrefs(session);
+      });
+    }
+  }
+
+  async function deferRuntimeUpgrade(mode, silent) {
+    var message = document.getElementById('dashboardMessage');
+    if (!silent) hideMessage(message);
+    try {
+      var session = await fetchSession();
+      var response = await fetch(API + 'runtime-upgrade.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'fetch'
+        },
+        body: JSON.stringify({
+          action: 'defer',
+          defer_mode: mode,
+          csrf_token: session.csrf_token || ''
+        })
+      });
+      var data = await readAdminJson(response);
+      if (!response.ok) {
+        throw new Error(data.error || 'Could not save preference.');
+      }
+      if (!silent) {
+        showMessage(message, data.message || 'Preference saved.', false);
+      }
+      closeRuntimeUpgradeModal();
+      var plan = data.plan || await fetchRuntimeUpgradePlan();
+      runtimeUpgradePlanCache = plan;
+      updateRuntimeUpgradeBanner(plan);
+      renderUpdatesAdminPanel(plan);
+      updateUpdatesNavBadge(plan);
+    } catch (error) {
+      if (!silent) {
+        showMessage(message, error.message, true);
+      } else {
+        closeRuntimeUpgradeModal();
+      }
+    }
+  }
+
+  async function cancelRuntimeUpgrade() {
+    closeRuntimeUpgradeModal();
+
+    var cached = runtimeUpgradePlanCache || {};
+    if ((cached.updates_available || 0) > 0 && !cached.job_busy) {
+      await deferRuntimeUpgrade('tab_only', true);
+    }
+  }
+
+  async function clearRuntimeDeferPrefs(session) {
+    var message = document.getElementById('dashboardMessage');
+    hideMessage(message);
+    try {
+      var latest = session || await fetchSession();
+      var response = await fetch(API + 'runtime-upgrade.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'fetch'
+        },
+        body: JSON.stringify({
+          action: 'clear_defer',
+          csrf_token: latest.csrf_token || ''
+        })
+      });
+      var data = await readAdminJson(response);
+      if (!response.ok) {
+        throw new Error(data.error || 'Could not restore reminders.');
+      }
+      showMessage(message, data.message || 'Reminders enabled.', false);
+      var plan = data.plan || await fetchRuntimeUpgradePlan();
+      runtimeUpgradePlanCache = plan;
+      updateRuntimeUpgradeBanner(plan);
+      renderUpdatesAdminPanel(plan);
+      updateUpdatesNavBadge(plan);
+    } catch (error) {
+      showMessage(message, error.message, true);
+    }
+  }
+
+  function runtimeDefaultImpactPlan() {
+    return {
+      updates_available: 0,
+      summary: 'Could not load update status. Read the guidance below.',
+      impact_summary: {
+        approve: {
+          title: 'If you approve & run updates',
+          website_summary: 'Normally installs newer PHP/Node/Git on this PC. If PHP changes, visitors may lose access for 1–3 minutes during Apache restart.',
+          points: [
+            'Website page files are not automatically rewritten.',
+            'After restart, homepage, shop, and contact should behave the same.',
+          ],
+        },
+        cancel: {
+          title: 'If you cancel (keep current versions)',
+          website_summary: 'Visitors keep browsing with no interruption. Nothing on the live site changes.',
+          points: [
+            'No downtime and no service restart.',
+            'You can review again from the System Updates tab.',
+          ],
+        },
+      },
+    };
+  }
+
+  function fillImpactList(listEl, titleEl, websiteEl, section) {
+    if (!listEl) return;
+    if (titleEl && section && section.title) {
+      titleEl.textContent = section.title;
+    }
+    if (websiteEl) {
+      websiteEl.textContent = section && section.website_summary ? section.website_summary : '';
+    }
+    listEl.textContent = '';
+    var points = section && section.points || [];
+    if (!points.length) {
+      var empty = document.createElement('li');
+      empty.className = 'runtime-impact-placeholder';
+      empty.textContent = 'No details available.';
+      listEl.appendChild(empty);
+      return;
+    }
+    points.forEach(function (point) {
+      var li = document.createElement('li');
+      li.textContent = point;
+      listEl.appendChild(li);
+    });
+  }
+
+  function renderRuntimeImpactSummaries(plan) {
+    var impact = plan.impact_summary || {};
+    fillImpactList(
+      document.getElementById('runtimeImpactApproveList'),
+      document.getElementById('runtimeImpactApproveTitle'),
+      document.getElementById('runtimeImpactApproveWebsite'),
+      impact.approve
+    );
+    fillImpactList(
+      document.getElementById('runtimeImpactCancelList'),
+      document.getElementById('runtimeImpactCancelTitle'),
+      document.getElementById('runtimeImpactCancelWebsite'),
+      impact.cancel
+    );
+    fillImpactList(
+      document.getElementById('runtimePanelApproveList'),
+      document.getElementById('runtimePanelApproveTitle'),
+      document.getElementById('runtimePanelApproveWebsite'),
+      impact.approve
+    );
+    fillImpactList(
+      document.getElementById('runtimePanelCancelList'),
+      document.getElementById('runtimePanelCancelTitle'),
+      document.getElementById('runtimePanelCancelWebsite'),
+      impact.cancel
+    );
+
+    var lead = document.getElementById('runtimeWebsiteImpactLead');
+    if (lead) {
+      var updates = plan.updates_available || 0;
+      if (updates > 0) {
+        lead.hidden = false;
+        lead.textContent = 'For visitors: UPDATE may cause brief downtime if PHP changes. CANCEL keeps the site online with no changes.';
+      } else {
+        lead.hidden = false;
+        lead.textContent = 'For visitors: everything is already up to date. UPDATE installs nothing. CANCEL leaves the site exactly as it is now.';
+      }
+    }
+  }
+
+  function renderRuntimeUpgradeModal(plan) {
+    var summary = document.getElementById('runtimeUpgradeModalSummary');
+    var impactWrap = document.getElementById('runtimeUpgradeImpactWrap');
+    if (!summary || !impactWrap) return;
+
+    summary.textContent = plan.summary || '';
+    renderRuntimeImpactSummaries(plan);
+    var table = document.createElement('table');
+    table.className = 'admin-table';
+    table.innerHTML = '<thead><tr><th>Package</th><th>Versions</th><th>Site impact</th><th>What changes</th></tr></thead>';
+    var tbody = document.createElement('tbody');
+    (plan.packages || []).forEach(function (pkg) {
+      if (!pkg.update_available) return;
+      var row = document.createElement('tr');
+      var versionText = (pkg.installed || '—') + ' → ' + (pkg.latest_stable || '—');
+      var changes = (pkg.will_change || []).join('; ');
+      var cells = [pkg.label || pkg.name || '', versionText, pkg.site_impact || '', changes];
+      cells.forEach(function (text) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        row.appendChild(td);
+      });
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    impactWrap.textContent = '';
+    impactWrap.appendChild(table);
+
+    if (plan.execution && !plan.execution.allowed) {
+      var note = document.createElement('p');
+      note.className = 'admin-note';
+      note.textContent = 'Automatic upgrade blocked: ' + (plan.execution.reasons || []).join(' ');
+      impactWrap.appendChild(note);
+    }
+
+    var approveBtn = document.getElementById('runtimeUpgradeApproveBtn');
+    if (approveBtn) {
+      var blocked = !!(plan.execution && !plan.execution.allowed);
+      var noUpdates = !(plan.updates_available > 0);
+      approveBtn.disabled = blocked || noUpdates;
+    }
+  }
+
+  function updateRuntimeUpgradeBanner(plan) {
+    var banner = document.getElementById('runtimeUpgradeBanner');
+    var title = document.getElementById('runtimeUpgradeBannerTitle');
+    var text = document.getElementById('runtimeUpgradeBannerText');
+    var panelBtn = document.getElementById('runtimePanelApproveBtn');
+    if (!banner || !title || !text) return;
+
+    var updates = plan.updates_available || 0;
+    var jobBusy = plan.job_busy;
+    var active = plan.active_job;
+
+    if (jobBusy && active) {
+      banner.hidden = false;
+      title.textContent = 'Runtime upgrade in progress';
+      text.textContent = 'Status: ' + (active.status || 'running') + ' — ' + (active.step || '') +
+        '. Apache may restart briefly.';
+      if (panelBtn) panelBtn.hidden = true;
+      updateUpdatesNavBadge(plan);
+      return;
+    }
+
+    if (updates > 0 && plan.banner_suppressed) {
+      banner.hidden = true;
+      if (panelBtn) panelBtn.hidden = false;
+      updateUpdatesNavBadge(plan);
+      return;
+    }
+
+    if (updates > 0) {
+      banner.hidden = false;
+      title.textContent = updates + ' runtime update(s) available';
+      var approveHint = (plan.impact_summary && plan.impact_summary.approve && plan.impact_summary.approve.points[0])
+        ? plan.impact_summary.approve.points[0]
+        : '';
+      var cancelHint = (plan.impact_summary && plan.impact_summary.cancel && plan.impact_summary.cancel.points[0])
+        ? plan.impact_summary.cancel.points[0]
+        : '';
+      text.textContent = 'Approve: ' + approveHint + ' | Cancel: ' + cancelHint;
+      if (panelBtn) panelBtn.hidden = false;
+      updateUpdatesNavBadge(plan);
+      return;
+    }
+
+    banner.hidden = true;
+    if (panelBtn) panelBtn.hidden = true;
+    updateUpdatesNavBadge(plan);
+  }
+
+  async function fetchRuntimeUpgradePlan() {
+    var response = await fetch(API + 'runtime-upgrade.php?action=plan', { credentials: 'same-origin' });
+    var data = await readAdminJson(response);
+    if (!response.ok) {
+      throw new Error(data.error || 'Could not load upgrade plan.');
+    }
+    return data.plan || {};
+  }
+
+  async function loadRuntimeUpgradeBanner() {
+    try {
+      var plan = await fetchRuntimeUpgradePlan();
+      runtimeUpgradePlanCache = plan;
+      updateRuntimeUpgradeBanner(plan);
+      renderRuntimeUpgradeModal(plan);
+      renderRuntimeImpactSummaries(plan);
+      renderUpdatesAdminPanel(plan);
+
+      if (plan.job_busy) {
+        startRuntimeUpgradePoll();
+      }
+    } catch (error) {
+      var bannerText = document.getElementById('runtimeUpgradeBannerText');
+      if (bannerText) bannerText.textContent = error.message;
+    }
+  }
+
+  async function pollRuntimeUpgradeJob() {
+    try {
+      var response = await fetch(API + 'runtime-upgrade.php?action=job', { credentials: 'same-origin' });
+      var data = await readAdminJson(response);
+      if (!response.ok) return;
+
+      var job = data.job;
+      var logEl = document.getElementById('runtimeUpgradeJobLog');
+      if (logEl && job && job.log_tail) {
+        logEl.hidden = false;
+        logEl.textContent = job.log_tail;
+      }
+
+      if (!job || !job.status) return;
+
+      var plan = await fetchRuntimeUpgradePlan();
+      plan.job_busy = job.status === 'queued' || job.status === 'running';
+      plan.active_job = job;
+      runtimeUpgradePlanCache = plan;
+      updateRuntimeUpgradeBanner(plan);
+
+      if (job.status === 'completed') {
+        stopRuntimeUpgradePoll();
+        showMessage(
+          document.getElementById('dashboardMessage'),
+          'Runtime upgrade completed. Compatibility: ' + (job.compatibility_ok ? 'OK' : 'check failed') + '.',
+          !job.compatibility_ok
+        );
+        loadRuntimeVersions();
+        loadUpdatesAdminPanel();
+      } else if (job.status === 'failed') {
+        stopRuntimeUpgradePoll();
+        showMessage(document.getElementById('dashboardMessage'), job.error || 'Runtime upgrade failed.', true);
+        loadUpdatesAdminPanel();
+      }
+    } catch (error) {
+      stopRuntimeUpgradePoll();
+    }
+  }
+
+  async function approveRuntimeUpgrade() {
+    var confirmInput = document.getElementById('runtimeUpgradeConfirm');
+    var message = document.getElementById('dashboardMessage');
+    hideMessage(message);
+
+    if (!confirmInput || confirmInput.value.trim() !== 'APPROVE UPGRADE') {
+      showMessage(message, 'Type APPROVE UPGRADE to confirm.', true);
+      return;
+    }
+
+    if (!window.confirm('Run approved runtime updates now? Apache may restart and the site may be unavailable for 1–3 minutes.')) {
+      return;
+    }
+
+    try {
+      var session = await fetchSession();
+      var response = await fetch(API + 'runtime-upgrade.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'fetch'
+        },
+        body: JSON.stringify({
+          action: 'start',
+          confirm_text: 'APPROVE UPGRADE',
+          csrf_token: session.csrf_token || ''
+        })
+      });
+      var data = await readAdminJson(response);
+      if (!response.ok) {
+        throw new Error(data.error || 'Could not start upgrade.');
+      }
+
+      showMessage(message, data.message || 'Upgrade started.', false);
+      closeRuntimeUpgradeModal();
+      var logEl = document.getElementById('runtimeUpgradeJobLog');
+      if (logEl) {
+        logEl.hidden = false;
+        logEl.textContent = 'Upgrade queued...';
+      }
+      await loadRuntimeUpgradeBanner();
+      startRuntimeUpgradePoll();
+    } catch (error) {
+      showMessage(message, error.message, true);
+    }
+  }
+
+  function renderRuntimeReport(runtime) {
+    var meta = document.getElementById('runtimeUpdatesMeta');
+    var tableWrap = document.getElementById('runtimeComponentsWrap');
+    var compatWrap = document.getElementById('runtimeCompatibilityWrap');
+    var stepsEl = document.getElementById('runtimeUpgradeSteps');
+    if (!meta || !tableWrap) return;
+
+    var components = runtime.components || [];
+    var compat = runtime.compatibility || {};
+    var policy = runtime.policy || {};
+    var updates = runtime.updates_available || 0;
+
+    meta.textContent = updates > 0
+      ? updates + ' runtime update(s) available. Site code is not auto-rewritten — run compatibility check after any PHP upgrade.'
+      : 'Runtime versions look current. Compatibility checks run against this site’s code.';
+
+    var table = document.createElement('table');
+    table.className = 'admin-table';
+    table.innerHTML = '<thead><tr><th>Tool</th><th>Installed</th><th>Latest stable</th><th>Status</th><th>Notes</th></tr></thead>';
+    var tbody = document.createElement('tbody');
+    components.forEach(function (item) {
+      var row = document.createElement('tr');
+      var status = item.status || 'unknown';
+      var statusLabel = status === 'current' ? 'Current' : (status === 'update_available' ? 'Update available' : 'Unknown');
+      var cells = [
+        item.name || '',
+        item.installed || '—',
+        item.latest_stable || '—',
+        statusLabel,
+        item.recommendation || ''
+      ];
+      cells.forEach(function (text) {
+        var td = document.createElement('td');
+        td.textContent = text;
+        row.appendChild(td);
+      });
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    tableWrap.textContent = '';
+    tableWrap.appendChild(table);
+
+    if (compatWrap) {
+      var lines = [];
+      (compat.checks || []).forEach(function (check) {
+        lines.push((check.ok ? '✓' : '✗') + ' ' + check.label + (check.detail ? ' (' + check.detail + ')' : ''));
+      });
+      compatWrap.textContent = lines.length ? 'Site compatibility: ' + lines.join(' | ') : '';
+    }
+
+    if (stepsEl && policy.how_to_upgrade) {
+      stepsEl.textContent = '';
+      policy.how_to_upgrade.forEach(function (step) {
+        var li = document.createElement('li');
+        li.textContent = step;
+        stepsEl.appendChild(li);
+      });
+    }
+  }
+
+  async function loadRuntimeVersions() {
+    var panel = document.getElementById('runtimeUpdatesPanel');
+    if (!panel) return;
+
+    try {
+      var response = await fetch(API + 'runtime-versions.php', { credentials: 'same-origin' });
+      var data = await readAdminJson(response);
+      if (!response.ok) {
+        throw new Error(data.error || 'Could not load runtime report.');
+      }
+      renderRuntimeReport(data.runtime || {});
+    } catch (error) {
+      var meta = document.getElementById('runtimeUpdatesMeta');
+      if (meta) meta.textContent = error.message;
+    }
+
+    var refreshBtn = document.getElementById('refreshRuntimeBtn');
+    if (refreshBtn && !refreshBtn.dataset.bound) {
+      refreshBtn.dataset.bound = '1';
+      refreshBtn.addEventListener('click', function () {
+        loadRuntimeVersions();
+      });
+    }
+
+    var verifyBtn = document.getElementById('verifyRuntimeBtn');
+    if (verifyBtn && !verifyBtn.dataset.bound) {
+      verifyBtn.dataset.bound = '1';
+      verifyBtn.addEventListener('click', async function () {
+        try {
+          var response = await fetch(API + 'runtime-versions.php?action=verify', { credentials: 'same-origin' });
+          var data = await readAdminJson(response);
+          if (!response.ok) {
+            throw new Error(data.error || 'Compatibility check failed.');
+          }
+          var compat = data.compatibility || {};
+          var msg = compat.ok
+            ? 'All compatibility checks passed for the current PHP runtime.'
+            : 'Some compatibility checks failed. Review the report and missing extensions.';
+          showMessage(document.getElementById('dashboardMessage'), msg, !compat.ok);
+          if (data.compatibility) {
+            renderRuntimeReport({ components: [], compatibility: compat, policy: {}, updates_available: 0 });
+          }
+        } catch (error) {
+          showMessage(document.getElementById('dashboardMessage'), error.message, true);
+        }
+      });
+    }
+  }
+
   async function loadBackupAdmin(session) {
     var createForm = document.getElementById('createBackupForm');
     var createBtn = document.getElementById('createBackupBtn');
@@ -2374,6 +3098,7 @@
     }
 
     try {
+      loadRuntimeVersions();
       var response = await fetch(API + 'backup-admin.php', {
         credentials: 'same-origin'
       });

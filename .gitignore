@@ -16,4 +16,7 @@ php/storage/shop/orders/
 php/storage/database/
 php/storage/admin-2fa.json
 php/storage/admin-auth.json
+php/storage/runtime-upgrade-job.json
+php/storage/runtime-upgrade-prefs.json
+php/storage/runtime-upgrade-history.json
 *.sqlite

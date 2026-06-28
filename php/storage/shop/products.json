@@ -50,15 +50,15 @@
             "currency": "PKR",
             "category": "Accessories",
             "images": [
-                "assets\/shop\/products\/product_20260626_133321_51ab1735c1e8.jpg"
+                "assets\/shop\/placeholder.svg"
             ],
-            "image": "assets\/shop\/products\/product_20260626_133321_51ab1735c1e8.jpg",
+            "image": "assets\/shop\/placeholder.svg",
             "track_stock": true,
             "stock": 49,
             "active": true,
             "created": "2026-06-26T13:36:21+00:00",
-            "updated": "2026-06-27T08:34:16+00:00"
+            "updated": "2026-06-28T10:28:35+00:00"
         }
     ],
-    "updated": "2026-06-27T08:34:16+00:00"
+    "updated": "2026-06-28T10:28:35+00:00"
 }

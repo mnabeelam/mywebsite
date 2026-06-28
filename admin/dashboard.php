@@ -40,40 +40,158 @@ if (!isAdminAuthenticated()) {
 
   <div class="admin-body">
     <aside class="admin-sidebar" aria-label="Admin navigation">
+      <div class="admin-sidebar-head">
+        <span class="admin-sidebar-eyebrow">Control panel</span>
+        <strong class="admin-sidebar-title">Navigation</strong>
+      </div>
       <nav class="admin-nav">
         <button type="button" class="admin-nav-item admin-tab is-active" data-tab="account" aria-selected="true">
-          <span class="admin-nav-index">01</span>
-          <span class="admin-nav-label">Account &amp; Contact</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Account &amp; Contact</span>
+            <span class="admin-nav-desc">Profile, password, inbox</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
         <button type="button" class="admin-nav-item admin-tab" data-tab="network" aria-selected="false">
-          <span class="admin-nav-index">02</span>
-          <span class="admin-nav-label">Network</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Network</span>
+            <span class="admin-nav-desc">Access &amp; security</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
         <button type="button" class="admin-nav-item admin-tab" data-tab="content" aria-selected="false">
-          <span class="admin-nav-index">03</span>
-          <span class="admin-nav-label">Certifications &amp; Knowledge</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Certifications &amp; Knowledge</span>
+            <span class="admin-nav-desc">CV, certs, AI data</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
         <button type="button" class="admin-nav-item admin-tab" data-tab="shop" aria-selected="false">
-          <span class="admin-nav-index">04</span>
-          <span class="admin-nav-label">Online Store</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Online Store</span>
+            <span class="admin-nav-desc">Products, stock, orders</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
         <button type="button" class="admin-nav-item admin-tab" data-tab="backup" aria-selected="false">
-          <span class="admin-nav-index">05</span>
-          <span class="admin-nav-label">Backup &amp; Data</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Backup &amp; Data</span>
+            <span class="admin-nav-desc">Restore, reset, runtime</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </button>
+        <button type="button" class="admin-nav-item admin-tab" data-tab="updates" aria-selected="false">
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">System Updates <span id="updatesNavBadge" class="admin-nav-badge" hidden></span></span>
+            <span class="admin-nav-desc">Pending &amp; history</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
         <button type="button" class="admin-nav-item admin-tab" data-tab="users" aria-selected="false" hidden>
-          <span class="admin-nav-index">06</span>
-          <span class="admin-nav-label">Users &amp; Roles</span>
+          <span class="admin-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span class="admin-nav-copy">
+            <span class="admin-nav-label">Users &amp; Roles</span>
+            <span class="admin-nav-desc">Accounts &amp; permissions</span>
+          </span>
+          <span class="admin-nav-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
         </button>
       </nav>
       <div class="admin-sidebar-foot">
-        <a href="index.php">Back to login</a>
-        <a href="../index.php">Homepage</a>
+        <a class="admin-sidebar-link" href="index.php">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Back to login
+        </a>
+        <a class="admin-sidebar-link" href="../index.php">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Homepage
+        </a>
       </div>
     </aside>
 
     <main class="admin-main">
+      <div id="runtimeUpgradeBanner" class="runtime-upgrade-banner" hidden role="status" aria-live="polite">
+        <div class="runtime-upgrade-banner-body">
+          <strong id="runtimeUpgradeBannerTitle">Runtime updates available</strong>
+          <p id="runtimeUpgradeBannerText" class="admin-note"></p>
+        </div>
+        <div class="admin-actions">
+          <button type="button" id="runtimeUpgradeReviewBtn" class="secondary">Review &amp; approve</button>
+        </div>
+      </div>
       <p id="dashboardMessage" class="message page-message" hidden></p>
+
+      <div id="runtimeUpgradeModal" class="runtime-upgrade-modal" hidden role="dialog" aria-modal="true" aria-labelledby="runtimeUpgradeModalTitle">
+        <div class="runtime-upgrade-modal-card">
+          <h2 id="runtimeUpgradeModalTitle">Approve runtime updates</h2>
+          <p id="runtimeUpgradeModalSummary" class="admin-note"></p>
+          <div id="runtimeWebsiteImpactLead" class="runtime-website-lead">
+            For visitors: everything is up to date today. <strong>Update</strong> installs nothing. <strong>Cancel</strong> leaves the site exactly as it is now.
+          </div>
+          <div class="runtime-impact-grid">
+            <div class="runtime-impact-card runtime-impact-approve">
+              <h3 id="runtimeImpactApproveTitle">If you approve &amp; run updates</h3>
+              <p id="runtimeImpactApproveWebsite" class="runtime-impact-website-summary">Nothing happens when all tools are current — your website keeps working as it does now.</p>
+              <ul id="runtimeImpactApproveList" class="runtime-impact-list">
+                <li>No packages will be installed if nothing newer is available.</li>
+                <li>Homepage, shop, contact, and admin stay online.</li>
+                <li>Your website files are not edited automatically.</li>
+              </ul>
+            </div>
+            <div class="runtime-impact-card runtime-impact-cancel">
+              <h3 id="runtimeImpactCancelTitle">If you cancel (keep current versions)</h3>
+              <p id="runtimeImpactCancelWebsite" class="runtime-impact-website-summary">Visitors see no change — the site stays online on current versions.</p>
+              <ul id="runtimeImpactCancelList" class="runtime-impact-list">
+                <li>No downtime and no Apache restart.</li>
+                <li>All pages, products, and settings remain unchanged.</li>
+                <li>You can review updates again from the <strong>System Updates</strong> tab.</li>
+              </ul>
+            </div>
+          </div>
+          <div id="runtimeUpgradeImpactWrap" class="admin-table-wrap"></div>
+          <p class="admin-note"><strong>What will NOT change:</strong> website PHP/HTML/CSS/JS source files are not modified automatically.</p>
+          <label for="runtimeUpgradeConfirm">Type <code>APPROVE UPGRADE</code> to confirm</label>
+          <input id="runtimeUpgradeConfirm" type="text" autocomplete="off" placeholder="APPROVE UPGRADE">
+          <div class="admin-actions">
+            <button type="button" id="runtimeUpgradeApproveBtn">Run approved updates</button>
+            <button type="button" id="runtimeUpgradeCancelBtn" class="secondary">Cancel</button>
+          </div>
+          <pre id="runtimeUpgradeJobLog" class="runtime-upgrade-log" hidden></pre>
+        </div>
+      </div>
 
     <div id="page-account" class="admin-page is-active">
       <header class="page-hero">
@@ -426,6 +544,40 @@ if (!isAdminAuthenticated()) {
         <div id="backupSummary" class="report-summary"></div>
       </section>
 
+      <section class="admin-panel" id="runtimeUpdatesPanel">
+        <h2>Runtime Versions &amp; Updates</h2>
+        <p class="admin-note">Checks PHP and related tools. OS packages are not auto-upgraded from the website; use the scripts below after backup.</p>
+        <p id="runtimeUpdatesMeta" class="admin-note">Loading runtime report...</p>
+        <div id="runtimeComponentsWrap" class="admin-table-wrap"></div>
+        <div id="runtimeCompatibilityWrap" class="admin-note"></div>
+        <div class="runtime-impact-grid" id="runtimePanelImpactGrid">
+          <div class="runtime-impact-card runtime-impact-approve">
+            <h3 id="runtimePanelApproveTitle">If you approve &amp; run updates</h3>
+            <p id="runtimePanelApproveWebsite" class="runtime-impact-website-summary"></p>
+            <ul id="runtimePanelApproveList" class="runtime-impact-list">
+              <li class="runtime-impact-placeholder">Loading…</li>
+            </ul>
+          </div>
+          <div class="runtime-impact-card runtime-impact-cancel">
+            <h3 id="runtimePanelCancelTitle">If you cancel (keep current versions)</h3>
+            <p id="runtimePanelCancelWebsite" class="runtime-impact-website-summary"></p>
+            <ul id="runtimePanelCancelList" class="runtime-impact-list">
+              <li class="runtime-impact-placeholder">Loading…</li>
+            </ul>
+          </div>
+        </div>
+        <div class="admin-actions">
+          <button type="button" id="refreshRuntimeBtn" class="secondary">Refresh report</button>
+          <button type="button" id="verifyRuntimeBtn" class="secondary">Run compatibility check</button>
+          <button type="button" id="runtimePanelApproveBtn" class="secondary" hidden>Approve available updates</button>
+        </div>
+        <details class="admin-note" style="margin-top:0.75rem">
+          <summary>How to upgrade safely (Windows)</summary>
+          <ol id="runtimeUpgradeSteps" class="admin-note" style="margin:0.5rem 0 0 1rem"></ol>
+          <p class="admin-note">Scripts: <code>scripts\check-runtime-versions.ps1</code> and <code>scripts\upgrade-runtimes.ps1 -Apply</code></p>
+        </details>
+      </section>
+
       <section class="admin-panel">
         <h2>Create Backup</h2>
         <p class="admin-note">Creates a password-protected ZIP archive of shop inventory, certifications, knowledge base, contact messages, visitor stats, site settings, access policy, admin login, and uploaded files.</p>
@@ -486,9 +638,39 @@ if (!isAdminAuthenticated()) {
       </div>
     </div>
 
-    <div id="page-users" class="admin-page">
+    <div id="page-updates" class="admin-page">
       <header class="page-hero">
         <p class="page-hero-eyebrow">Section 06</p>
+        <h2 class="page-hero-title">System Updates</h2>
+        <p class="page-hero-desc">Pending runtime upgrades, reminder preferences, and full upgrade history.</p>
+      </header>
+      <div class="page-content">
+      <section class="admin-panel">
+        <h2>Reminder status</h2>
+        <p id="updatesReminderStatus" class="admin-note">Loading…</p>
+        <div class="admin-actions">
+          <button type="button" id="updatesReviewBtn">Review &amp; approve updates</button>
+          <button type="button" id="updatesClearDeferBtn" class="secondary" hidden>Show banner reminders again</button>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <h2>Pending upgrades</h2>
+        <p id="updatesPendingMeta" class="admin-note">Loading pending packages…</p>
+        <div id="updatesPendingWrap" class="admin-table-wrap"></div>
+      </section>
+
+      <section class="admin-panel">
+        <h2>Upgrade history</h2>
+        <p class="admin-note">Deferred choices, completed upgrades, and failures with date and time.</p>
+        <div id="updatesHistoryWrap" class="admin-table-wrap"></div>
+      </section>
+      </div>
+    </div>
+
+    <div id="page-users" class="admin-page">
+      <header class="page-hero">
+        <p class="page-hero-eyebrow">Section 07</p>
         <h2 class="page-hero-title">Users &amp; Roles</h2>
         <p class="page-hero-desc">Manage admin accounts, roles, and database-backed access control.</p>
       </header>
