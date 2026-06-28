@@ -6,6 +6,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/site-settings.php';
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/user-services.php';
+require_once __DIR__ . '/admin-2fa.php';
 
 function adminConfigured(): bool
 {
@@ -190,6 +191,39 @@ function redirectTo(string $path): void
 {
     header('Location: ' . $path);
     exit;
+}
+
+function completeAdminLoginOrRequire2fa(string $username): void
+{
+    if (admin2faAppliesToUser($username)) {
+        beginPendingAdmin2fa($username);
+        if (wantsJsonResponse()) {
+            jsonResponse([
+                'status' => '2fa_required',
+                'redirect' => 'index.php?step=2fa',
+                'message' => 'Enter the 6-digit code from your authenticator app.',
+            ]);
+        }
+        redirectTo('index.php?step=2fa');
+    }
+
+    loginSuccessResponse($username);
+}
+
+function completeAdminLoginWith2fa(string $code): void
+{
+    $username = pendingAdmin2faUser();
+    if ($username === null) {
+        loginFailureResponse('Authentication session expired. Please log in again.', 401);
+    }
+
+    if (!verifyAdmin2faCode($code)) {
+        logSecurityEvent('failed 2FA for user "' . $username . '" from ' . clientIp());
+        loginFailureResponse('Invalid authentication code.', 401);
+    }
+
+    clearPendingAdmin2fa();
+    loginSuccessResponse($username);
 }
 
 function loginFailureResponse(string $message, int $status = 401): void

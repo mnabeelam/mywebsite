@@ -11,6 +11,16 @@ requireSameOrigin();
 requireCsrfFromRequest();
 rateLimit('admin_login', 8, 900);
 
+$action = sanitizeText($_POST['login_action'] ?? 'password', 20);
+
+if ($action === '2fa') {
+    $otp = sanitizeText($_POST['otp_code'] ?? '', 12);
+    if ($otp === '') {
+        loginFailureResponse('Authentication code is required.', 400);
+    }
+    completeAdminLoginWith2fa($otp);
+}
+
 if (!adminConfigured()) {
     loginFailureResponse(
         'Admin login is not configured. Create config/local.php from config/local.example.php or set server env vars.',
@@ -30,4 +40,4 @@ if (!verifyAdminCredentials($username, $password)) {
     loginFailureResponse('Invalid username or password.', 401);
 }
 
-loginSuccessResponse($username);
+completeAdminLoginOrRequire2fa($username);

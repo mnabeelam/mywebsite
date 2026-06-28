@@ -89,12 +89,16 @@ function getAdminIpWhitelist(): array
 
 function isAdminIpAllowed(?string $ip = null): bool
 {
+    $ip = $ip ?? clientIp();
+    if (in_array($ip, ['127.0.0.1', '::1'], true)) {
+        return true;
+    }
+
     $whitelist = getAdminIpWhitelist();
     if ($whitelist === []) {
         return true;
     }
 
-    $ip = $ip ?? clientIp();
     return in_array($ip, $whitelist, true);
 }
 

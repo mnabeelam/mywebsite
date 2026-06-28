@@ -14,4 +14,6 @@ php/storage/contact-messages/
 php/storage/backups/
 php/storage/shop/orders/
 php/storage/database/
+php/storage/admin-2fa.json
+php/storage/admin-auth.json
 *.sqlite

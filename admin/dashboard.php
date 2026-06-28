@@ -113,6 +113,30 @@ if (!isAdminAuthenticated()) {
         </form>
       </section>
 
+      <section class="admin-panel" id="twoFactorPanel">
+        <h2>Two-Factor Authentication (2FA)</h2>
+        <p id="twoFactorStatus" class="admin-note">Loading 2FA status...</p>
+        <div class="admin-actions">
+          <button type="button" id="begin2faBtn" class="secondary">Enable 2FA</button>
+          <button type="button" id="disable2faBtn" class="secondary" hidden>Disable 2FA</button>
+        </div>
+        <div id="twoFactorSetup" class="account-password-form" hidden>
+          <p class="admin-note">Scan this QR code in Google Authenticator, Microsoft Authenticator, or similar app.</p>
+          <img id="twoFactorQr" alt="2FA QR code" width="220" height="220" hidden>
+          <p class="admin-note">Manual key: <code id="twoFactorSecret">—</code></p>
+          <form id="confirm2faForm" class="admin-product-form">
+            <label for="confirm2faCode">Enter the 6-digit code from your app</label>
+            <input id="confirm2faCode" name="otp_code" type="text" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" required>
+            <button type="submit">Confirm and enable 2FA</button>
+          </form>
+        </div>
+        <form id="disable2faForm" class="admin-product-form" hidden>
+          <label for="disable2faCode">Authentication code (required to disable)</label>
+          <input id="disable2faCode" name="otp_code" type="text" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" required>
+          <button type="submit" class="secondary">Disable 2FA</button>
+        </form>
+      </section>
+
       <section class="admin-panel">
         <h2>Contact Settings</h2>
         <p class="admin-note">Manage contact details used for form notifications and the public site.</p>
@@ -509,6 +533,7 @@ if (!isAdminAuthenticated()) {
     </main>
   </div>
 </div>
+<script src="qrcode.min.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

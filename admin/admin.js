@@ -614,6 +614,8 @@
           ? 'Active notification email: ' + settings.effective_contact_email
           : 'No notification email set yet — form messages use config/local.php if available.';
       }
+
+      updateTwoFactorUi(data.two_factor || {});
     } catch (error) {
       showMessage(document.getElementById('dashboardMessage'), error.message, true);
     }
@@ -684,6 +686,120 @@
             emailDisplay.textContent = result.settings.effective_contact_email || result.settings.contact_email || 'Not set';
           }
           showMessage(document.getElementById('dashboardMessage'), result.message || 'Contact settings saved.', false);
+        } catch (error) {
+          showMessage(document.getElementById('dashboardMessage'), error.message, true);
+        }
+      });
+    }
+
+    bindTwoFactorControls();
+  }
+
+  function renderTwoFactorQr(uri) {
+    var qrImg = document.getElementById('twoFactorQr');
+    if (!qrImg || !uri) {
+      return;
+    }
+    if (typeof qrcode !== 'function') {
+      qrImg.hidden = true;
+      return;
+    }
+    try {
+      var qrObj = qrcode(0, 'M');
+      qrObj.addData(uri);
+      qrObj.make();
+      qrImg.src = qrObj.createDataURL(4, 4);
+      qrImg.hidden = false;
+    } catch (error) {
+      qrImg.hidden = true;
+    }
+  }
+
+  function updateTwoFactorUi(twoFactor) {
+    var statusEl = document.getElementById('twoFactorStatus');
+    var beginBtn = document.getElementById('begin2faBtn');
+    var disableBtn = document.getElementById('disable2faBtn');
+    var setupBox = document.getElementById('twoFactorSetup');
+    var disableForm = document.getElementById('disable2faForm');
+    var enabled = !!(twoFactor && twoFactor.enabled);
+
+    if (statusEl) {
+      statusEl.textContent = enabled
+        ? '2FA is ON. Login requires a code from your authenticator app.'
+        : '2FA is OFF. Enable it to require a 6-digit code after your password.';
+    }
+    if (beginBtn) beginBtn.hidden = enabled;
+    if (disableBtn) disableBtn.hidden = !enabled;
+    if (disableForm) disableForm.hidden = !enabled;
+    if (setupBox && enabled) setupBox.hidden = true;
+  }
+
+  function bindTwoFactorControls() {
+    var beginBtn = document.getElementById('begin2faBtn');
+    var disableBtn = document.getElementById('disable2faBtn');
+    var setupBox = document.getElementById('twoFactorSetup');
+    var confirmForm = document.getElementById('confirm2faForm');
+    var disableForm = document.getElementById('disable2faForm');
+
+    if (beginBtn && !beginBtn.dataset.bound) {
+      beginBtn.dataset.bound = '1';
+      beginBtn.addEventListener('click', async function () {
+        hideMessage(document.getElementById('dashboardMessage'));
+        try {
+          var latestSession = await fetchSession();
+          var result = await postSettingsAction(latestSession, { action: '2fa_begin_setup' });
+          var setup = result.setup || {};
+          if (setupBox) setupBox.hidden = false;
+          renderTwoFactorQr(setup.provisioning_uri || '');
+          var secretEl = document.getElementById('twoFactorSecret');
+          if (secretEl) secretEl.textContent = setup.secret || '—';
+          showMessage(document.getElementById('dashboardMessage'), result.message || 'Scan QR code and confirm.', false);
+        } catch (error) {
+          showMessage(document.getElementById('dashboardMessage'), error.message, true);
+        }
+      });
+    }
+
+    if (disableBtn && !disableBtn.dataset.bound) {
+      disableBtn.dataset.bound = '1';
+      disableBtn.addEventListener('click', function () {
+        if (disableForm) disableForm.hidden = false;
+      });
+    }
+
+    if (confirmForm && !confirmForm.dataset.bound) {
+      confirmForm.dataset.bound = '1';
+      confirmForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        hideMessage(document.getElementById('dashboardMessage'));
+        try {
+          var latestSession = await fetchSession();
+          var result = await postSettingsAction(latestSession, {
+            action: '2fa_confirm_setup',
+            otp_code: document.getElementById('confirm2faCode').value
+          });
+          updateTwoFactorUi(result.two_factor || { enabled: true });
+          if (setupBox) setupBox.hidden = true;
+          showMessage(document.getElementById('dashboardMessage'), result.message || '2FA enabled.', false);
+        } catch (error) {
+          showMessage(document.getElementById('dashboardMessage'), error.message, true);
+        }
+      });
+    }
+
+    if (disableForm && !disableForm.dataset.bound) {
+      disableForm.dataset.bound = '1';
+      disableForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        hideMessage(document.getElementById('dashboardMessage'));
+        try {
+          var latestSession = await fetchSession();
+          var result = await postSettingsAction(latestSession, {
+            action: '2fa_disable',
+            otp_code: document.getElementById('disable2faCode').value
+          });
+          updateTwoFactorUi(result.two_factor || { enabled: false });
+          showMessage(document.getElementById('dashboardMessage'), result.message || '2FA disabled.', false);
         } catch (error) {
           showMessage(document.getElementById('dashboardMessage'), error.message, true);
         }

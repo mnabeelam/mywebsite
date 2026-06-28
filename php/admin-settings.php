@@ -4,12 +4,14 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/site-settings.php';
+require_once __DIR__ . '/lib/admin-2fa.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     requireAdminPermission('account.view');
     jsonResponse([
         'status' => 'ok',
         'settings' => adminSettingsSummary(),
+        'two_factor' => admin2faPublicSummary(),
     ]);
 }
 
@@ -101,6 +103,59 @@ switch ($action) {
             'status' => 'ok',
             'message' => 'Password updated successfully.',
             'settings' => adminSettingsSummary(),
+            'two_factor' => admin2faPublicSummary(),
+        ]);
+        break;
+
+    case '2fa_begin_setup':
+        requireAdminPermission('account.edit');
+        $username = (string) ($_SESSION['admin_user'] ?? '');
+        if ($username === '') {
+            jsonResponse(['error' => 'Session expired. Log in again.'], 401);
+        }
+        $setup = admin2faBeginSetup($username);
+        jsonResponse([
+            'status' => 'ok',
+            'setup' => $setup,
+            'message' => 'Scan the QR code in Google Authenticator, then confirm with a live code.',
+        ]);
+        break;
+
+    case '2fa_confirm_setup':
+        requireAdminPermission('account.edit');
+        $username = (string) ($_SESSION['admin_user'] ?? '');
+        $code = sanitizeText($_POST['otp_code'] ?? '', 12);
+        if ($username === '' || $code === '') {
+            jsonResponse(['error' => 'Authentication code is required.'], 400);
+        }
+        try {
+            admin2faConfirmSetup($username, $code);
+        } catch (InvalidArgumentException $e) {
+            jsonResponse(['error' => $e->getMessage()], 400);
+        }
+        jsonResponse([
+            'status' => 'ok',
+            'message' => 'Two-factor authentication is now enabled.',
+            'two_factor' => admin2faPublicSummary(),
+        ]);
+        break;
+
+    case '2fa_disable':
+        requireAdminPermission('account.edit');
+        $username = (string) ($_SESSION['admin_user'] ?? '');
+        $code = sanitizeText($_POST['otp_code'] ?? '', 12);
+        if ($username === '' || $code === '') {
+            jsonResponse(['error' => 'Authentication code is required to disable 2FA.'], 400);
+        }
+        try {
+            admin2faDisable($username, $code);
+        } catch (InvalidArgumentException $e) {
+            jsonResponse(['error' => $e->getMessage()], 400);
+        }
+        jsonResponse([
+            'status' => 'ok',
+            'message' => 'Two-factor authentication disabled.',
+            'two_factor' => admin2faPublicSummary(),
         ]);
         break;
 
