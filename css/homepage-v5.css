@@ -382,6 +382,8 @@ section[id] {
 
 .section-block.theme-violet .section-eyebrow { color: var(--hp-violet); }
 .section-block.theme-emerald .section-eyebrow { color: var(--hp-emerald); }
+.section-block.theme-cyan .section-eyebrow { color: var(--hp-cyan); }
+.section-block.theme-amber .section-eyebrow { color: var(--hp-amber); }
 .section-block.theme-amber .section-eyebrow { color: var(--hp-amber); }
 
 /* ——— Bento ——— */

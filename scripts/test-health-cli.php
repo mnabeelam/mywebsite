@@ -14,4 +14,7 @@ echo json_encode([
     'knowledge_entries' => (int) ($index['entry_count'] ?? 0),
     'admin_configured' => adminConfigured(),
     'ai_enabled' => filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN),
+    'assistant_mode' => (filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN) && configValue('OPENAI_API_KEY') !== '')
+        ? 'openai'
+        : 'knowledge',
 ], JSON_PRETTY_PRINT) . PHP_EOL;

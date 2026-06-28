@@ -83,8 +83,9 @@
     document.querySelectorAll('.kpi-number, .metric-value').forEach(animateCounter);
   }
 
-  /* Site assistant — knowledge search first; OpenAI only when enabled in config/local.php */
+  /* Portfolio assistant — knowledge search first; OpenAI only when configured */
   var AI_ENABLED = false;
+  var OPENAI_CONFIGURED = false;
 
   fetch('php/site-config.php', { credentials: 'same-origin' })
     .then(function (response) {
@@ -92,9 +93,11 @@
     })
     .then(function (data) {
       AI_ENABLED = !!(data && data.ai_enabled);
+      OPENAI_CONFIGURED = !!(data && data.openai_configured);
     })
     .catch(function () {
       AI_ENABLED = false;
+      OPENAI_CONFIGURED = false;
     });
 
   var fallbackReplies = {
@@ -215,7 +218,7 @@
           finish(result.data.answer);
           return null;
         }
-        if (!AI_ENABLED) {
+        if (!AI_ENABLED || !OPENAI_CONFIGURED) {
           return 'fallback';
         }
         return askOpenAiAssistant(question);
@@ -252,6 +255,14 @@
       if (e.key === 'Enter') window.askAI();
     });
   }
+
+  document.querySelectorAll('.ai-suggestion').forEach(function (button) {
+    button.addEventListener('click', function () {
+      if (!aiInput) return;
+      aiInput.value = button.getAttribute('data-question') || '';
+      window.askAI();
+    });
+  });
 
   var aiFab = document.getElementById('aiFab');
   var aiPanel = document.getElementById('aiPanel');

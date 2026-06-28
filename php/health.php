@@ -17,4 +17,7 @@ jsonResponse([
     'admin_configured' => adminConfigured(),
     'openai_configured' => configValue('OPENAI_API_KEY') !== '',
     'ai_enabled' => filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN),
+    'assistant_mode' => (filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN) && configValue('OPENAI_API_KEY') !== '')
+        ? 'openai'
+        : 'knowledge',
 ]);

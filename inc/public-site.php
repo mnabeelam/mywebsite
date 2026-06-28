@@ -38,7 +38,9 @@ function site_page(string $active, string $title, string $description, string $c
 <meta property="og:description" content="<?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?>">
 <meta property="og:type" content="website">
 <meta property="og:url" content="<?php echo htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8'); ?>">
-<meta property="og:image" content="https://it.gift.edu.pk/assets/og-image.svg">
+<meta property="og:image" content="https://it.gift.edu.pk/assets/og-image.png">
+<meta property="og:image:alt" content="Mirza Nabeel Ahmed — Deputy Director IT portfolio">
+<meta name="twitter:image" content="https://it.gift.edu.pk/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="<?php echo htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8'); ?>">
 <title><?php echo htmlspecialchars($fullTitle, ENT_QUOTES, 'UTF-8'); ?></title>
@@ -114,11 +116,18 @@ function site_page(string $active, string $title, string $description, string $c
   <span>Views: <strong id="visitor-views">—</strong></span>
 </div>
 
-<div id="ai-widget" class="ai-widget" aria-label="Quick Assistant">
-  <button type="button" id="aiFab" class="ai-fab" aria-expanded="false" aria-controls="aiPanel">AI</button>
+<div id="ai-widget" class="ai-widget" aria-label="Portfolio Assistant">
+  <button type="button" id="aiFab" class="ai-fab" aria-expanded="false" aria-controls="aiPanel">Ask</button>
   <div id="aiPanel" class="ai-panel" hidden>
-    <h3>Quick Assistant</h3>
+    <h3>Portfolio Assistant</h3>
+    <p class="ai-panel-note">Searches your career knowledge and IT shop — no paid API required.</p>
     <div id="ai-answer" role="status" aria-live="polite">Ask about career, certifications, IT shop products, prices, or contact.</div>
+    <div class="ai-suggestions" role="group" aria-label="Suggested questions">
+      <button type="button" class="ai-suggestion" data-question="What Oracle experience do you have?">Oracle</button>
+      <button type="button" class="ai-suggestion" data-question="What projects have you delivered?">Projects</button>
+      <button type="button" class="ai-suggestion" data-question="What products are in the shop?">Shop</button>
+      <button type="button" class="ai-suggestion" data-question="How can I contact you?">Contact</button>
+    </div>
     <label class="visually-hidden" for="ai-input">Ask about experience, shop products, or contact</label>
     <input id="ai-input" type="text" placeholder="e.g. What IT gadgets are in the shop?" autocomplete="off">
     <button id="ai-submit" type="button">Ask</button>

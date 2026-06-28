@@ -1,15 +1,9 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/inc/public-site.php';
+require __DIR__ . '/inc/site-content.php';
 
-$projectsPath = __DIR__ . '/knowledge/projects.json';
-$projects = [];
-if (is_readable($projectsPath)) {
-    $decoded = json_decode((string) file_get_contents($projectsPath), true);
-    if (is_array($decoded)) {
-        $projects = $decoded;
-    }
-}
+$projects = siteLoadProjects();
 
 site_page(
     'projects',

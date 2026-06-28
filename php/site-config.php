@@ -7,8 +7,13 @@ require_once __DIR__ . '/lib/site-settings.php';
 
 header('Cache-Control: public, max-age=300');
 
+$openaiConfigured = configValue('OPENAI_API_KEY') !== '';
+$aiEnabled = filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN);
+
 jsonResponse([
     'status' => 'ok',
-    'ai_enabled' => filter_var(configValue('AI_ENABLED'), FILTER_VALIDATE_BOOLEAN),
+    'ai_enabled' => $aiEnabled,
+    'openai_configured' => $openaiConfigured,
+    'assistant_mode' => ($aiEnabled && $openaiConfigured) ? 'openai' : 'knowledge',
     'contact' => publicSiteContact(),
 ]);

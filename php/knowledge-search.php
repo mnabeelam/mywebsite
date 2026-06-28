@@ -18,9 +18,15 @@ if ($question === '') {
 
 $result = searchCombinedAssistantAnswer($question);
 
+$answer = $result['answer'];
+if ($answer === null || trim((string) $answer) === '') {
+    $answer = 'I could not find a specific match in the career knowledge base or shop catalog. '
+        . 'Try asking about Oracle, VMware, projects, career timeline, certifications, shop products, or contact details.';
+}
+
 jsonResponse([
     'status' => 'ok',
     'question' => $question,
-    'answer' => $result['answer'],
+    'answer' => $answer,
     'source' => $result['source'],
 ]);

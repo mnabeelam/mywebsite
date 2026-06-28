@@ -8,7 +8,9 @@ return [
     'ADMIN_PASSWORD' => '',
     'OPENAI_API_KEY' => '',
     'OPENAI_MODEL' => 'gpt-4o-mini',
-    'AI_ENABLED' => false,
+    // Set true to enable the assistant. Works fully without OPENAI_API_KEY (knowledge + shop search).
+    // Add OPENAI_API_KEY later only if you want GPT-generated answers.
+    'AI_ENABLED' => true,
     'CONTACT_EMAIL' => 'your_email@example.com',
     // Optional extra inbox for admin alerts (orders, contact form). Also uses notification email + DB user emails.
     'ADMIN_NOTIFY_EMAIL' => '',

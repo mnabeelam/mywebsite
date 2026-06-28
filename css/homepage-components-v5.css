@@ -906,8 +906,38 @@
 }
 
 .ai-panel h3 {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   font-size: 0.95rem;
+  color: var(--hp-cyan);
+}
+
+.ai-panel-note {
+  margin: 0 0 10px;
+  color: var(--hp-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.ai-suggestion {
+  padding: 6px 10px;
+  border: 1px solid var(--hp-stroke);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--hp-soft);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.ai-suggestion:hover {
+  border-color: var(--hp-cyan-border);
   color: var(--hp-cyan);
 }
 
