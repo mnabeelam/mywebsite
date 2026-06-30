@@ -3,88 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Immersive 3D demo — datacenter, particle universe, and Earth visualizations.">
+<meta name="description" content="Immersive 3D demo — scroll-driven datacenter, particle universe, and textured Earth.">
 <meta name="robots" content="noindex, nofollow">
 <title>3D Demo Experience | Mirza Nabeel Ahmed</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../css/demo-page.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/demo-page.css?v=2">
 </head>
-<body class="demo-page">
+<body class="demo-page" data-demo-chapter="hero">
 
-<div id="loader">Initializing 3D experience…</div>
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-brand" aria-hidden="true">
+    <span class="loader-logo">◈</span>
+    <span class="loader-brand-text">Nabeel<span>3D</span></span>
+  </div>
+  <div class="loader-orbit" aria-hidden="true"></div>
+  <p class="loader-title">Launching immersive experience</p>
+  <div class="loader-bar"><span id="loaderProgress"></span></div>
+  <p id="loaderStatus" class="loader-status">Loading WebGL assets…</p>
+</div>
+
+<div id="cursorGlow" class="demo-cursor-glow" aria-hidden="true"></div>
 
 <div id="three-container" aria-hidden="true"></div>
+<div class="demo-aurora" aria-hidden="true">
+  <span class="aurora-blob aurora-a"></span>
+  <span class="aurora-blob aurora-b"></span>
+  <span class="aurora-blob aurora-c"></span>
+</div>
 <div class="demo-overlay" aria-hidden="true"></div>
+<div class="demo-grain" aria-hidden="true"></div>
 <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
+<aside class="demo-scroll-rail" aria-label="Scroll progress">
+  <span class="demo-scroll-rail-fill" id="scrollRailFill"></span>
+  <button type="button" class="demo-scroll-dot is-active" data-chapter="hero" aria-label="Intro"></button>
+  <button type="button" class="demo-scroll-dot" data-chapter="datacenter" aria-label="Datacenter"></button>
+  <button type="button" class="demo-scroll-dot" data-chapter="particles" aria-label="Particles"></button>
+  <button type="button" class="demo-scroll-dot" data-chapter="earth" aria-label="Earth"></button>
+</aside>
+
 <nav class="demo-nav">
-  <a class="back-link" href="../index.php">← Back to Portfolio</a>
-  <span>3D Demo Experience</span>
+  <div class="demo-nav-brand">
+    <a class="back-link" href="../index.php">← Portfolio</a>
+    <span class="demo-nav-badge">Live WebGL</span>
+  </div>
+  <div class="demo-nav-chapters" aria-label="Demo chapters">
+    <a href="#top" class="demo-chapter is-active" data-chapter="hero">Intro</a>
+    <a href="#datacenter" class="demo-chapter" data-chapter="datacenter">Datacenter</a>
+    <a href="#particles" class="demo-chapter" data-chapter="particles">Particles</a>
+    <a href="#earth" class="demo-chapter" data-chapter="earth">Earth</a>
+  </div>
 </nav>
 
 <main class="demo-content">
-  <section class="demo-hero">
-    <div class="demo-hero-panel">
-      <h1>Immersive Technology Demo</h1>
-      <p>Heavy visual effects live here so the main homepage stays fast. Explore the 3D universe background, animated particle field, and datacenter showcase.</p>
+  <section class="demo-hero demo-chapter-section" id="top" data-chapter="hero">
+    <div class="demo-hero-panel demo-reveal">
+      <p class="demo-eyebrow"><span class="eyebrow-dot"></span> Scroll · parallax · cinematic WebGL</p>
+      <h1><span class="title-gradient">Immersive</span> Technology Demo</h1>
+      <p class="demo-hero-lead">A scroll-driven 3D story — fly through datacenter racks, constellation particles, and a textured Earth with atmosphere glow.</p>
+      <div class="demo-stats">
+        <div class="demo-stat"><strong>WebGL</strong><span>Three.js r160</span></div>
+        <div class="demo-stat"><strong>4</strong><span>Live clusters</span></div>
+        <div class="demo-stat"><strong>5K</strong><span>Star field</span></div>
+        <div class="demo-stat"><strong>HD</strong><span>Earth maps</span></div>
+      </div>
       <div class="demo-tags">
         <span class="demo-tag">Three.js</span>
-        <span class="demo-tag">Particles</span>
-        <span class="demo-tag">Datacenter</span>
-        <span class="demo-tag">Earth Engine</span>
+        <span class="demo-tag">Scroll story</span>
+        <span class="demo-tag">3D racks</span>
+        <span class="demo-tag">Earth textures</span>
+      </div>
+      <p class="demo-scroll-hint" aria-hidden="true"><span></span> Scroll to begin</p>
+    </div>
+  </section>
+
+  <section class="demo-section demo-chapter-section" id="datacenter" data-chapter="datacenter">
+    <div class="section-head demo-reveal">
+      <span class="section-index">01</span>
+      <div>
+        <h2>3D Datacenter Experience</h2>
+        <p class="section-lead">Fly the camera into four live server racks — each cluster pulses with its own LED color in WebGL.</p>
+      </div>
+    </div>
+    <div class="rack-grid">
+      <article class="server-rack demo-reveal" data-rack-color="#f59e0b" style="--rack-accent:#f59e0b">
+        <div class="rack-top">
+          <span class="rack-icon">⬡</span>
+          <span class="rack-status">Online</span>
+        </div>
+        <h3><span class="led led-amber"></span>Oracle Cluster</h3>
+        <p>Oracle 19c • Data Guard • High Availability</p>
+        <div class="rack-metrics"><span>HA</span><span>RAC</span><span>19c</span></div>
+      </article>
+      <article class="server-rack demo-reveal" data-rack-color="#3b82f6" style="--rack-accent:#3b82f6">
+        <div class="rack-top">
+          <span class="rack-icon">◇</span>
+          <span class="rack-status">Online</span>
+        </div>
+        <h3><span class="led led-blue"></span>VMware Cluster</h3>
+        <p>ESXi • Hyper-V • Proxmox virtualization</p>
+        <div class="rack-metrics"><span>ESXi</span><span>vMotion</span><span>DRS</span></div>
+      </article>
+      <article class="server-rack demo-reveal" data-rack-color="#22c55e" style="--rack-accent:#22c55e">
+        <div class="rack-top">
+          <span class="rack-icon">▣</span>
+          <span class="rack-status">Online</span>
+        </div>
+        <h3><span class="led led-green"></span>Linux Infrastructure</h3>
+        <p>Apache • Squid • Nagios monitoring</p>
+        <div class="rack-metrics"><span>Apache</span><span>Nagios</span><span>Proxy</span></div>
+      </article>
+      <article class="server-rack demo-reveal" data-rack-color="#a855f7" style="--rack-accent:#a855f7">
+        <div class="rack-top">
+          <span class="rack-icon">✦</span>
+          <span class="rack-status">Active</span>
+        </div>
+        <h3><span class="led led-purple"></span>AI Projects</h3>
+        <p>Face Recognition • Smart Campus automation</p>
+        <div class="rack-metrics"><span>CV</span><span>IoT</span><span>ML</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="demo-section demo-chapter-section" id="particles" data-chapter="particles">
+    <div class="section-head demo-reveal">
+      <span class="section-index">02</span>
+      <div>
+        <h2>Particle Universe</h2>
+        <p class="section-lead">Constellation lines weave between nodes and brighten toward your cursor while the starfield accelerates.</p>
+      </div>
+    </div>
+    <div class="particle-note demo-reveal">
+      <div class="particle-note-icon">✦</div>
+      <div>
+        <strong>Performance-first design</strong>
+        <p>Canvas networking runs on top of WebGL. These scripts never load on the homepage — first visit stays fast on mobile.</p>
       </div>
     </div>
   </section>
 
-  <section class="demo-section" id="datacenter">
-    <h2>3D Datacenter Experience</h2>
-    <p class="section-lead">Enterprise infrastructure clusters — Oracle, VMware, Linux, and AI systems.</p>
-    <div class="rack-grid">
-      <article class="server-rack">
-        <h3><span class="led"></span>Oracle Cluster</h3>
-        <p>Oracle 19c • Data Guard • High Availability</p>
-      </article>
-      <article class="server-rack">
-        <h3><span class="led"></span>VMware Cluster</h3>
-        <p>ESXi • Hyper-V • Proxmox virtualization</p>
-      </article>
-      <article class="server-rack">
-        <h3><span class="led"></span>Linux Infrastructure</h3>
-        <p>Apache • Squid • Nagios monitoring</p>
-      </article>
-      <article class="server-rack">
-        <h3><span class="led"></span>AI Projects</h3>
-        <p>Face Recognition • Smart Campus automation</p>
-      </article>
+  <section class="demo-section demo-chapter-section" id="earth" data-chapter="earth">
+    <div class="section-head demo-reveal">
+      <span class="section-index">03</span>
+      <div>
+        <h2>Global Technology Leadership</h2>
+        <p class="section-lead">The camera closes on a textured Earth with atmosphere halo — rotation follows your mouse for a cinematic finish.</p>
+      </div>
     </div>
-  </section>
-
-  <section class="demo-section" id="particles">
-    <h2>Particle Universe</h2>
-    <p class="section-lead">Move your mouse — the starfield responds while Three.js renders the wireframe Earth behind the content.</p>
-    <div class="particle-note">
-      <span class="particle-star">✦</span>
-      This page loads WebGL and canvas effects on demand. Your main portfolio homepage does not load these scripts, keeping first visit fast on mobile and slow connections.
-    </div>
-  </section>
-
-  <section class="demo-section" id="earth">
-    <h2>Global Technology Leadership</h2>
-    <p class="section-lead">CSS-powered Earth showcase — lightweight alternative to full texture mapping.</p>
-    <div class="earth-showcase-wrap">
-      <div class="earth-showcase" aria-hidden="true"></div>
+    <div class="earth-showcase-wrap demo-reveal">
+      <div class="earth-orbit-system" aria-hidden="true">
+        <span class="earth-orbit earth-orbit-1"></span>
+        <span class="earth-orbit earth-orbit-2"></span>
+        <div class="earth-showcase-ring">
+          <div class="earth-showcase-glow"></div>
+        </div>
+      </div>
+      <p class="earth-caption">Live WebGL Earth rendered behind this panel</p>
     </div>
   </section>
 
   <footer class="demo-footer">
-    <p><a href="../index.php">Return to main portfolio</a></p>
+    <a class="demo-footer-cta" href="../index.php">← Return to main portfolio</a>
     <p>© 2026 Mirza Nabeel Ahmed</p>
   </footer>
 </main>
 
 <button id="backTop" type="button" aria-label="Back to top">↑</button>
 
-<script src="../js/three.min.js"></script>
-<script src="../js/demo-page.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
+<script src="../js/demo-page.js?v=2"></script>
 </body>
 </html>
